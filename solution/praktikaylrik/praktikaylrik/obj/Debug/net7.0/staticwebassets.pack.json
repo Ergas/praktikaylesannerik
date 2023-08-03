@@ -245,6 +245,26 @@
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
+      "Id": "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\wwwroot\\libled.jpg",
+      "PackagePath": "staticwebassets\\libled.jpg"
+    },
+    {
+      "Id": "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\wwwroot\\logo.svg",
+      "PackagePath": "staticwebassets\\logo.svg"
+    },
+    {
+      "Id": "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\wwwroot\\pilt.jpg",
+      "PackagePath": "staticwebassets\\pilt.jpg"
+    },
+    {
+      "Id": "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\wwwroot\\remove.svg",
+      "PackagePath": "staticwebassets\\remove.svg"
+    },
+    {
+      "Id": "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\wwwroot\\symbol.svg",
+      "PackagePath": "staticwebassets\\symbol.svg"
+    },
+    {
       "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.build.praktikaylrik.props",
       "PackagePath": "build\\praktikaylrik.props"
     },
