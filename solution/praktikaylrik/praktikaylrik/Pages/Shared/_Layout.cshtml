@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/praktikaylrik.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+<body class="full-page">
+    <header class="container">
+        <nav class="navbar navbar-expand-sm mb-3 bg-white">
             <div class="container">
-                <a asp-page="/Index"><img src="~/logo.svg" /></a>
+                <a asp-page="/Index" class="logo"><img src="~/logo.svg" /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -27,7 +27,7 @@
                         </li>
                     </ul>
                 </div>
-                <img src="~/symbol.svg" />
+                <img class="symbol" src="~/symbol.svg" />
             </div>
         </nav>
     </header>
@@ -37,30 +37,49 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer text-muted">
         <div class="container">
             <div class="grid-container">
-                <div class="grid-item">
-                    <div class="footer-title">
-                        Curabitur
-                    </div>
+                <div class="grid-item footer-title">
+                    Curabitur
                 </div>
-                <div class="grid-item">
-                    <div class="footer-title">
-                        Fusce
-                    </div>
+                <div class="grid-item footer-title">
+                    Fusce
                 </div>
-                <div class="grid-item">
-                    <div class="footer-title">
-                        Kontakt
-                    </div>
+                <div class="grid-item footer-title">
+                    Kontakt
                 </div>
-                <div class="grid-item">
-                    s
+                <div class="grid-item footer-title">
+                </div>
+                <div class="grid-item footer-content">
+                    Emauris
+                    <br> Kfringilla
+                    <br> Oin magna sem
+                    <br> Kelementum              
+                </div>
+                <div class="grid-item footer-content">
+                    Ecosectetur
+                    <br> Ksollicitudin
+                    <br> Omvulputate
+                    <br> Nunc fringilla tellu
+                </div>
+                <div class="grid-item footer-content">
+                    <b>Peakontor: Tallinnas</b>
+                    <br> Väike-Ameerika 1, 11415 Tallinn
+                    <br> Telefon: 605 4450
+                    <br> Faks: 605 3186
+                </div>
+                <div class="grid-item footer-content">
+                    <b>Harukontor: Võrus</b>
+                    <br> Oja tn 7 (külastusaadress)
+                    <br> Telefon: 605 3330
+                    <br> Faks: 605 3155
                 </div>
             </div>
         </div>
     </footer>
+
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
