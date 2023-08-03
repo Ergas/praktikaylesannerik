@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj": {}
+    "C:\\Users\\ergas\\Documents\\Github\\praktikaylesannerik\\solution\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj": {
+    "C:\\Users\\ergas\\Documents\\Github\\praktikaylesannerik\\solution\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj",
+        "projectUniqueName": "C:\\Users\\ergas\\Documents\\Github\\praktikaylesannerik\\solution\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj",
         "projectName": "praktikaylrik",
-        "projectPath": "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj",
+        "projectPath": "C:\\Users\\ergas\\Documents\\Github\\praktikaylesannerik\\solution\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj",
         "packagesPath": "C:\\Users\\ergas\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\obj\\",
+        "outputPath": "C:\\Users\\ergas\\Documents\\Github\\praktikaylesannerik\\solution\\Ergas\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ergas\\AppData\\Roaming\\NuGet\\NuGet.Config",

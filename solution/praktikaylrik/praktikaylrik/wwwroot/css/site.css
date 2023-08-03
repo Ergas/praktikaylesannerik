@@ -34,14 +34,14 @@ body {
     margin-bottom: 60px;    
 }
 
-.grid-container {
+.grid-container4 {
     background-color: #373737;
     display: grid;
     grid-template-columns: auto auto auto auto;
     padding: 2.5rem;
 }
 
-.grid-item {
+.grid-item4 {
     text-align: left;
     color: #e0e0e0;
 }
@@ -52,4 +52,18 @@ body {
 
 .footer-content {
     font-size: 15px;
+}
+
+.grid-container2 {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.grid-item2 {
+    text-align: center;
+    color: #ffffff;
+}
+
+.bg-blue {
+    background-color: #005aa1;
 }
