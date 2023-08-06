@@ -51,7 +51,7 @@ body {
 
 .grid-item2 {
     padding-top: 6rem;
-    padding-left: 7rem;
+    padding-left: 6rem;
     font-size: 22px;
     text-align: left;
     color: #ffffff;
@@ -59,6 +59,7 @@ body {
 
 .bg-blue {
     background-color: #005aa1;
+    color: #ffffff;
 }
 
 .txt-middle-of-box {
@@ -131,4 +132,55 @@ body {
     display: grid;
     grid-template-columns: auto auto;
     
+}
+
+.grid-container-add-event {
+    display: grid;
+    grid-template-columns: 15rem 100rem;
+    max-height: 70px;
+
+}
+
+.grid-item-add-event {
+    padding-top: 0.5rem;
+    height: 70px;
+    font-size: 28px;
+    color: #ffffff;
+    text-align: center;
+}
+
+.add-event-img {
+    object-fit: cover;
+    height: 70px;
+    width: 65%;
+}
+
+.add-event-form {
+    padding-top: 1rem;
+    align-content: center;
+    text-align: left;
+    width: 50%;
+    margin: auto;
+}
+
+.form-container {
+    padding-top: 1rem;
+    display: grid;
+    grid-template-columns: 150px 300px;
+    text-align: left;
+}
+
+.form-container-detail {
+    margin: 0.2rem;
+}
+
+.add-event-caption {
+    color: #0d5899;
+    font-size: 20px;
+    text-align: left;
+}
+
+.form-button {
+    border-radius: 3px;
+    width: 70px;
 }
