@@ -136,7 +136,7 @@ body {
 
 .grid-container-add-event {
     display: grid;
-    grid-template-columns: 15rem 100rem;
+    grid-template-columns: 15rem 89rem;
     max-height: 70px;
 
 }
@@ -152,7 +152,7 @@ body {
 .add-event-img {
     object-fit: cover;
     height: 70px;
-    width: 65%;
+    width: 74%;
 }
 
 .add-event-form {
@@ -183,4 +183,20 @@ body {
 .form-button {
     border-radius: 3px;
     width: 70px;
+}
+
+.participants {
+    display: grid;
+    grid-template-columns: 130px 200px;
+}
+
+.participants-list {
+    display: grid;
+    grid-template-columns: 250px 140px 60px 60px;
+}
+
+.participants-body {
+    padding-top: 1rem;
+    width: 50%;
+    margin: auto;
 }
