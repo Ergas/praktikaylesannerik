@@ -30,22 +30,40 @@
     </div>
 
     <div class="container-event">
-        <div class="event-list-event border-bottom">
-            <div>1. pealkiri</div>
-            <div>19.08.2023</div>
-            <div>Osavõtjad</div>
-            <div>X</div>
+        <div class="event-list-event-past">
+            @{int count = 1;}
+            @foreach (Event e in Model.eventsFuture)
+            {
+                <div>@count. @e.Name</div>
+                <div>@e.EventDate.ToString("dd.MM.yyyy")</div>
+                <div><a href="/Participants?id=@e.EventId" class="logo">Osavõtjad</a></div>
+                {
+                    count++;
+                }
+            }
         </div>
     </div>
     <div class="container-event">
-        <div class="event-list-event border-bottom">
-            <div>1. pealkiri</div>
-            <div>19.08.2023</div>
-            <div>Osavõtjad</div>
-            <div>X</div>
+        <div class="event-list-event">      
+            @{
+                int countPast = 1;
+            }
+            @foreach (Event e in Model.eventsPast)
+            {
+                <div>@countPast. @e.Name</div>
+                <div>@e.EventDate.ToString("dd.MM.yyyy")</div>
+                <div><a href="/Participants?id=@e.EventId" class="logo">Osavõtjad</a></div>
+                <div>X</div>
+                {
+                    countPast++;
+                }
+            }
         </div>
     </div>
 </div>
+<div class="container"><a asp-page="AddEvent">LISA ÜRITUS</a></div>
+
+
 
 
 

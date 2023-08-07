@@ -20,27 +20,25 @@
 
         <div class="participants">
             <div>Ürituse nimi:</div>
-            <div>Fusce ex dul, finibus eu luctus vel</div>
+            <div>@Model.EventToShow.Name</div>
             <div>Toimumisaeg:</div>
-            <div>18.02.2016</div>
+            <div>@Model.EventToShow.EventDate</div>
             <div>Koht:</div>
-            <div>Condimentum a nunc</div>
+            <div>@Model.EventToShow.Location</div>
             <div>Osavõtjad:</div>
             <div>
                 <br />
                 <div class="participants-list">
-                <div>1. nimi</div>
-                <div>27734634217</div>
-                <div>Vaata</div>
-                <div>Kustuta</div>
-                <div>1. nimi</div>
-                <div>27734634217</div>
-                <div>Vaata</div>
-                <div>Kustuta</div>
-                <div>1. nimi</div>
-                <div>27734634217</div>
-                <div>Vaata</div>
-                <div>Kustuta</div>
+                    @{int count = 0;}
+                    @foreach (Guest guest in Model.guests)
+                        {
+                            <div>@count. @guest.FirstName @guest.LastName</div>
+                            <div>@guest.IdNumber</div>
+                            <div><a href="ParticipantInfo?id=@guest.GuestId">Vaata</a></div>
+                            <div><a href="ParticipantInfo?id=@guest.GuestId">Kustuta</a></div>
+                            { count++; }
+                        }
+
                 </div>
             </div>
         </div>
@@ -54,7 +52,7 @@
         <div class="add-event-caption">
             Osavõtjate lisamine
         </div>
-        <form>
+        <form action="" method="post">
             <input class="form-container-detail" type="radio" name="clientType" value="Eraisik" />
             <label class="form-container-detail" for="fname">Eraisik</label>
             <input class="form-container-detail" type="radio" name="clientType" value="Ettevõte" />
