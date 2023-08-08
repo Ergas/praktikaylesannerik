@@ -82,8 +82,8 @@
                                 <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" />
                             }
                         }
-                        <label class="form-container-detail" for="payment">Maksmisviis:</label>
-                        <select class="form-container-detail" name="payment" id="payment">
+                        <label class="form-container-detail" for="paymentTypeId">Maksmisviis:</label>
+                        <select class="form-container-detail" name="paymentTypeId" id="paymentTypeId">
                             @{
                                 foreach (PaymentType type in Model.PaymentTypes)
                                 {
