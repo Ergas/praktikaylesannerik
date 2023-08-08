@@ -47,7 +47,7 @@
             Osavõtjate lisamine
         </div>
         @{
-            if (Model.Client.ClientTypeId.Equals(0))
+            if (Model.ClientType == 0)
             {
                 <form action="" method="get">
                     <input class="form-container-detail" type="radio" name="clientType" value="1" checked />
@@ -60,10 +60,10 @@
                 </form>
             } else
             {
-                <form action="?eventId=@Model.EventToShow.EventId&guestId=@Model.Client.GuestId&change=@Model.IsChanging" method="post">
+                <form action="" method="post">
                     <div class="form-container">
                         @{
-                            if (Model.Client.ClientTypeId.Equals(1))
+                            if (Model.ClientType == 1)
                             {
                                 <label class="form-container-detail" for="firstName">Eesnimi:</label>
                                 <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" />
@@ -71,9 +71,8 @@
                                 <input class="form-container-detail" type="text" id="lastName" name="lastName" value="@Model.Client.LastName" />
                                 <label class="form-container-detail" for="idNumber">Isikukood:</label>
                                 <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" />
-                                <input type="text" name="clientType" value="false" hidden />
                             }
-                            else if (Model.Client.ClientTypeId.Equals(2))
+                            else if (Model.ClientType == 2)
                             {
                                 <label class="form-container-detail" for="firstName">Ettevõtte nimi:</label>
                                 <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" />
@@ -81,7 +80,6 @@
                                 <input class="form-container-detail" type="number" id="lastName" name="lastName" value="@Model.Client.LastName" />
                                 <label class="form-container-detail" for="idNumber">Registrikood:</label>
                                 <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" />
-                                <input type="text" name="clientType" value="true" hidden />
                             }
                         }
                         <label class="form-container-detail" for="payment">Maksmisviis:</label>
@@ -95,6 +93,10 @@
                         </select>
                         <label class="form-container-detail" for="addInfo">Lisainfo:</label>
                         <textarea class="form-container-detail" id="addInfo" name="addInfo" rows="3" cols="60" maxlength="5000"></textarea>
+                        <input type="number" name="eventId" value="@Model.EventToShow.EventId" hidden />
+                        <input type="number" name="guestId" value="@Model.Client.GuestId" hidden />
+                        <input type="number" name="clientTypeId" value="@Model.ClientType" hidden />
+
                     </div>
                     <br />
                     <br />

@@ -8,7 +8,6 @@ namespace praktikaylrik.Pages
 {
     public class AddEvent : PageModel
     {
-        private readonly ILogger<AddEvent> _logger;
         public List<string> errors = new List<string>();
 
         public string Name { get; set; }
@@ -16,10 +15,6 @@ namespace praktikaylrik.Pages
         public string Location { get; set; }
         public string AddInfo { get; set; }
 
-        public AddEvent(ILogger<AddEvent> logger)
-        {
-            _logger = logger;
-        }
 
         public void OnGet()
         {

@@ -84,9 +84,9 @@ namespace praktikaylrik.Pages
             {
                 int eventId = (int)dataReader["event_id"];
                 int guestId = (int)dataReader["guest_id"];
-                bool isCompany = (bool)dataReader["is_company"];
+                int clientType = (int)dataReader["client_type"];
                 int guestCount = 1;
-                if (isCompany)
+                if (clientType == 2)
                 {
                     guestCount = int.Parse((string)dataReader["last_name"]);
                 }

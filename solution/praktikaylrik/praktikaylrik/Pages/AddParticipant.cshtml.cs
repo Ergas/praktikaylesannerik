@@ -28,15 +28,13 @@ namespace praktikaylrik.Pages
 
         public bool IsChanging = false;
 
-        private SqlConnection? cnn;
-        private SqlCommand? command;
-        private SqlDataReader? dataReader;
+        public int ClientType = 0;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
-        public void OnGet(int eventId, int guestId, bool change)
+        public void OnGet(int eventId, int guestId, int clientType, bool change)
         {
             GetEvent(eventId);
             GetPaymentTypes();
@@ -47,6 +45,10 @@ namespace praktikaylrik.Pages
             if (change)
             {
                 IsChanging = true;
+            }
+            if (clientType != 0)
+            {
+                ClientType = clientType;
             }
         }
 
@@ -62,12 +64,11 @@ namespace praktikaylrik.Pages
         /// <param name="paymentTypeId"></param>
         /// <param name="addInfo"></param>
         /// <param name="isChanging"></param>
-        public void OnPost(int eventId, int guestId, string firstName, string lastName, int clientTypeId, string idNumber, int paymentTypeId, string addInfo, bool isChanging)
+        public void OnPost(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId)
         {
             GetEvent(eventId);
-
             // Check if all the fields are filled as required
-            if (clientTypeId.Equals(1))
+            if (clientTypeId == 1)
             {
                 // first check for private person
                 if (firstName != null && firstName.Length < 2)
@@ -82,7 +83,8 @@ namespace praktikaylrik.Pages
                 {
                     Errors.Add("Kontrolli isikukoodi, pikkus peaks olema 11 numbrit.");
                 }
-            } else
+            }
+            else
             {
                 // then check for business
                 if (firstName != null && firstName.Length < 2)
@@ -101,12 +103,10 @@ namespace praktikaylrik.Pages
             if (Errors.Count.Equals(0))
             {
                 // Create client as object
-                CreateGuest(eventId, guestId, firstName!, lastName!, clientTypeId, idNumber!, paymentTypeId, addInfo, isChanging);
+                CreateGuest(eventId, guestId, firstName!, lastName!, clientTypeId, idNumber!, paymentTypeId, addInfo, IsChanging);
 
-                Response.Redirect("../Participants?id=" + eventId);
+                Response.Redirect("../Participants?Id=" + eventId);
             }
-
-
         }
 
         /// <summary>
@@ -115,6 +115,10 @@ namespace praktikaylrik.Pages
         /// <param name="eventId"></param>
         private void GetEvent(int eventId)
         {
+            SqlConnection cnn;
+            SqlCommand command;
+            SqlDataReader dataReader;
+
             cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
 
@@ -162,6 +166,9 @@ namespace praktikaylrik.Pages
         /// <param name="id"></param>
         private void GetGuest(int id)
         {
+            SqlConnection cnn;
+            SqlCommand command;
+            SqlDataReader dataReader;
 
             cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
@@ -231,8 +238,12 @@ namespace praktikaylrik.Pages
                 Client.AddInfo = "";
             }
 
-            SqlConnection cnn = new SqlConnection(DatabaseConnection.ConnectionString);
-            SqlCommand command = cnn.CreateCommand();
+            SqlConnection cnn;
+            SqlCommand command;
+
+            cnn = new SqlConnection(DatabaseConnection.ConnectionString);
+            cnn.Open();
+            command = cnn.CreateCommand();
 
             // Either update or insert a new object (Guest) into database
             if (isChanging)
@@ -242,9 +253,9 @@ namespace praktikaylrik.Pages
             }
             else
             {
-                command.CommandText = "INSERT INTO guest (first_name, last_name, id_number, payment_type_id, add_info, event_id) VALUES(@fname, @lname, @idNumber, @paymentTypeId, @addInfo, @eventId;";
+                command.CommandText = "INSERT INTO guest (first_name, last_name, client_type, id_number, payment_type_id, add_info, event_id) VALUES(@fname, @lname, @clientType, @idNumber, @paymentTypeId, @addInfo, @eventId);";
                 command.Parameters.AddWithValue("@eventId", eventId);
-                command.Parameters.AddWithValue("@clientType", Client.ClientTypeId);
+                command.Parameters.AddWithValue("@clientType", clientTypeId);
             }
             command.Parameters.AddWithValue("@fname", Client.FirstName);
             command.Parameters.AddWithValue("@lname", Client.LastName);
@@ -259,6 +270,10 @@ namespace praktikaylrik.Pages
    
         private void GetPaymentTypes()
         {
+            SqlConnection cnn;
+            SqlCommand command;
+            SqlDataReader dataReader;
+
             cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
 

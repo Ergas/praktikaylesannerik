@@ -103,7 +103,7 @@ namespace praktikaylrik.Pages
                     GuestId = (int)dataReader["guest_id"],
                     FirstName = (string)dataReader["first_name"],
                     LastName = (string)dataReader["last_name"],
-                    ClientTypeId = (int)dataReader["client_type_id"],
+                    ClientTypeId = (int)dataReader["client_type"],
                     IdNumber = (string)dataReader["id_number"],
                     PaymentTypeId = (int)dataReader["payment_type_id"],
                     AddInfo = (string)dataReader["add_info"],
