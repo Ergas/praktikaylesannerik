@@ -10,19 +10,18 @@ namespace praktikaylrik.Pages
 {
     public class Participants : PageModel
     {
-        private readonly ILogger<Participants> _logger;
-        public List<Guest> guests = new List<Guest>();
-        private Guest GuestToShow { get; set; }
+        public List<Guest> guests = new();
 
-        public Event EventToShow { get; set; }
+        public Event? EventToShow { get; set; }
 
         public List<string> Errors { get; set; } = new List<string>();
 
-        public Participants(ILogger<Participants> logger)
-        {
-            _logger = logger;
-        }
-
+        /// <summary>
+        /// Method to fetch information about an event from the database or to delete guests from an event.
+        /// </summary>
+        /// <param name="id">Id of the event.</param>
+        /// <param name="guestId">Id of the guest.</param>
+        /// <param name="delete"Will have information when user wants to delete a guest from the database.</param>
         public void OnGet(int id, int guestId, string delete)
         {
             if (!string.IsNullOrEmpty(delete))
@@ -30,7 +29,6 @@ namespace praktikaylrik.Pages
                 SqlConnection cnn;
                 SqlCommand command;
                 string sql;
-                SqlDataReader dataReader;
 
                 cnn = new SqlConnection(DatabaseConnection.ConnectionString);
                 cnn.Open();
@@ -46,6 +44,10 @@ namespace praktikaylrik.Pages
             GetEvent(id);
         }
 
+        /// <summary>
+        /// Helper method to get information about an event from the database.
+        /// </summary>
+        /// <param name="eventId">Id of the event.</param>
         private void GetEvent(int eventId)
         {
             SqlConnection cnn;

@@ -1,55 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.SignalR.Protocol;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
 
 namespace praktikaylrik.Pages
 {
     public class AddEvent : PageModel
     {
-        public List<string> errors = new List<string>();
+        public List<string> errors = new();
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public DateTime Date { get; set; }
-        public string Location { get; set; }
-        public string AddInfo { get; set; }
+        public string? Location { get; set; }
+        public string? AddInfo { get; set; }
 
-
-        public void OnGet()
-        {
-        }
-
+        /// <summary>
+        /// Function which creates a new event and saves it to the database.
+        /// </summary>
+        /// <param name="name">Name of the event that is being created.</param>
+        /// <param name="date">Date of when the event should happen.</param>
+        /// <param name="location">Location where the event would be held.</param>
+        /// <param name="addInfo">Additional information about the event.</param>
         public void OnPost(string name, DateTime date, string location, string addInfo)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                errors.Add("Ürituse nime lahter ei tohi olla tühi!");
-            }
-            if (string.IsNullOrEmpty(location))
-            {
-                errors.Add("Ürituse asukoha lahter ei tohi olla tühi!");
-            }
-            if (DateTime.Compare(DateTime.Now, date) > 0)
-            {
-                errors.Add("Lisatav üritus peab toimuma tulevikus!");
-            }
-            if (addInfo != null && addInfo.Length > 1000)
-            {
-                errors.Add("Lisainfo pikkus tohib olla maksimaalselt 1000 tähemärki. Praegu on pikkus " + addInfo.Length + " tähemärki.");
-            }
+
+            CheckForErrors(name, date, location, addInfo);
 
             if (errors.Count == 0)
             {
-
-                Event event1 = new()
-                {
-                    Name = name,
-                    EventDate = date,
-                    Location = location,
-                    AddInfo = addInfo
-                };
-
                 SqlConnection cnn;
                 SqlCommand command;
                 string sql;
@@ -73,6 +49,33 @@ namespace praktikaylrik.Pages
             Date = date;
             Location = location;
             AddInfo = addInfo;
+        }
+
+        /// <summary>
+        /// Method to check for faulty inputs.
+        /// </summary>
+        /// <param name="name">Name of the event that is being created.</param>
+        /// <param name="date">Date of when the event should happen.</param>
+        /// <param name="location">Location where the event would be held.</param>
+        /// <param name="addInfo">Additional information about the event.</param>
+        private void CheckForErrors(string name, DateTime date, string location, string addInfo)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                errors.Add("Ürituse nime lahter ei tohi olla tühi!");
+            }
+            if (string.IsNullOrEmpty(location))
+            {
+                errors.Add("Ürituse asukoha lahter ei tohi olla tühi!");
+            }
+            if (DateTime.Compare(DateTime.Now, date) > 0)
+            {
+                errors.Add("Lisatav üritus peab toimuma tulevikus!");
+            }
+            if (addInfo != null && addInfo.Length > 1000)
+            {
+                errors.Add("Lisainfo pikkus tohib olla maksimaalselt 1000 tähemärki. Praegu on pikkus " + addInfo.Length + " tähemärki.");
+            }
         }
     }
 }

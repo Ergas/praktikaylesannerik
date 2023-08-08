@@ -1,26 +1,17 @@
-﻿using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
-using System.Net.NetworkInformation;
-using System.Numerics;
-using System.Reflection.Metadata;
-using System.Web;
 
 namespace praktikaylrik.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
-        public List<Event> eventsFuture = new List<Event>();
-        public List<Event> eventsPast = new List<Event>();
+        public List<Event> eventsFuture = new();
+        public List<Event> eventsPast = new();
         public IDictionary<int, int> GuestCount { get; set; } = new Dictionary<int, int>();
 
-        public IndexModel(ILogger<IndexModel> logger)
-        {
-            _logger = logger;
-        }
-
+        /// <summary>
+        /// Method to fetch all events from future and past from the database and to prepare them to show to user on web page.
+        /// </summary>
         public void OnGet()
         {
             Event eventObj;
@@ -54,15 +45,16 @@ namespace praktikaylrik.Pages
                 {
                     addInfo = "";
                 }
-                
 
-                eventObj = new Event();
 
-                eventObj.EventId = id;
-                eventObj.Name = name;
-                eventObj.EventDate = dateTime;
-                eventObj.Location = location;
-                eventObj.AddInfo = addInfo;
+                eventObj = new Event
+                {
+                    EventId = id,
+                    Name = name,
+                    EventDate = dateTime,
+                    Location = location,
+                    AddInfo = addInfo
+                };
 
                 GuestCount.Add(eventObj.EventId, 0);
 
@@ -104,6 +96,10 @@ namespace praktikaylrik.Pages
             eventsPast.Sort((x, y) => y.EventDate.CompareTo(x.EventDate));
         }
 
+        /// <summary>
+        /// Method to delete event from the database.
+        /// </summary>
+        /// <param name="deleteId">Id of the event that should be deleted.</param>
         public void OnPost(int deleteId)
         {
             SqlConnection cnn;

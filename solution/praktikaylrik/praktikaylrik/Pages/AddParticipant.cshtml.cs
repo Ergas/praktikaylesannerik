@@ -1,11 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Numerics;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace praktikaylrik.Pages
 {
@@ -33,7 +27,10 @@ namespace praktikaylrik.Pages
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="eventId">Id of the event to which user wants to add participants or change guest's info.</param>
+        /// <param name="guestId">Id of the participant whose info is being edited.</param>
+        /// <param name="clientType">Type of guest (whether private person or company).</param>
+        /// <param name="changeDetails">Number 0 means creating new participant for the event, 1 means editing someone's info.</param>
         public void OnGet(int eventId, int guestId, int clientType, int changeDetails)
         {
             GetEvent(eventId);
@@ -50,17 +47,17 @@ namespace praktikaylrik.Pages
         }
 
         /// <summary>
-        /// 
+        /// Creatinga new customer or editing existing one.
         /// </summary>
-        /// <param name="eventId"></param>
-        /// <param name="guestId"></param>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <param name="clientTypeId"></param>
-        /// <param name="idNumber"></param>
-        /// <param name="paymentTypeId"></param>
-        /// <param name="addInfo"></param>
-        /// <param name="isChanging"></param>
+        /// <param name="eventId">Id of the event to which user wants to add participants or change guest's info.</param>
+        /// <param name="guestId">Id of the participant whose info is being edited.</param>
+        /// <param name="firstName">First name of a private person or name of the company.</param>
+        /// <param name="lastName">Last name of a private person or amount of guests from a company.</param>
+        /// <param name="idNumber">Personal identification code for private person, registry number for company.</param>
+        /// <param name="paymentTypeId">Payment type, whether it would be cash or bank transaction etc.</param>
+        /// <param name="addInfo">Additional information about the guest in this event.</param>
+        /// <param name="clientTypeId">Type of guest (whether private person or company).</param>
+        /// <param name="isChanging">Number 0 means creating new participant for the event, 1 means editing someone's info.</param>
         public void OnPost(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId, int isChanging)
         {
             GetEvent(eventId);
@@ -115,9 +112,9 @@ namespace praktikaylrik.Pages
         }
 
         /// <summary>
-        /// 
+        /// Method to fetch an event from the database to show it's information on the webpage.
         /// </summary>
-        /// <param name="eventId"></param>
+        /// <param name="eventId">Id of the event.</param>
         private void GetEvent(int eventId)
         {
             SqlConnection cnn;
@@ -166,9 +163,9 @@ namespace praktikaylrik.Pages
         }
 
         /// <summary>
-        /// 
+        /// Method to fetch information about a guest from the database.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Id of the guest.</param>
         private void GetGuest(int id)
         {
             SqlConnection cnn;
@@ -211,17 +208,17 @@ namespace praktikaylrik.Pages
         }
 
         /// <summary>
-        /// 
+        /// Method to create guest which will be saved into the database.
         /// </summary>
-        /// <param name="eventId"></param>
-        /// <param name="guestId"></param>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <param name="clientTypeId"></param>
-        /// <param name="idNumber"></param>
-        /// <param name="paymentTypeId"></param>
-        /// <param name="addInfo"></param>
-        /// <param name="isChanging"></param>
+        /// <param name="eventId">Id of the event to which user wants to add participants or change guest's info.</param>
+        /// <param name="guestId">Id of the participant whose info is being edited.</param>
+        /// <param name="firstName">First name of a private person or name of the company.</param>
+        /// <param name="lastName">Last name of a private person or amount of guests from a company.</param>
+        /// <param name="idNumber">Personal identification code for private person, registry number for company.</param>
+        /// <param name="paymentTypeId">Payment type, whether it would be cash or bank transaction etc.</param>
+        /// <param name="addInfo">Additional information about the guest in this event.</param>
+        /// <param name="clientTypeId">Type of guest (whether private person or company).</param>
+        /// <param name="isChanging">Number 0 means creating new participant for the event, 1 means editing someone's info.</param>
         private void CreateGuest(int eventId, int guestId, string firstName, string lastName, int clientTypeId, string idNumber, int paymentTypeId, string addInfo, int isChanging)
         {
             Client = new Guest()
@@ -273,6 +270,9 @@ namespace praktikaylrik.Pages
             cnn.Close();
         }
    
+        /// <summary>
+        /// Method to fetch all payment types from database.
+        /// </summary>
         private void GetPaymentTypes()
         {
             SqlConnection cnn;
