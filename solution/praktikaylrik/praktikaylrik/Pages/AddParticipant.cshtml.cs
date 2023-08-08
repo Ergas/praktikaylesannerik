@@ -80,6 +80,10 @@ namespace praktikaylrik.Pages
                 {
                     Errors.Add("Kontrolli isikukoodi, pikkus peaks olema 11 numbrit.");
                 }
+                if (addInfo != null && addInfo.Length > 1500)
+                {
+                    Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 1500 märki! Praegu on sisestatud " +  addInfo.Length + " märki.");
+                }
             }
             else
             {
@@ -95,14 +99,18 @@ namespace praktikaylrik.Pages
                 {
                     Errors.Add("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
                 }
+                if (addInfo != null && addInfo.Length > 5000)
+                {
+                    Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 5000 märki! Praegu on sisestatud " + addInfo.Length + " märki.");
+                }
             }
 
             if (Errors.Count.Equals(0))
             {
                 // Create client as object
-                CreateGuest(eventId, guestId, firstName!, lastName!, clientTypeId, idNumber!, paymentTypeId, addInfo, isChanging);
+                CreateGuest(eventId, guestId, firstName!, lastName!, clientTypeId, idNumber!, paymentTypeId, addInfo!, isChanging);
 
-                Response.Redirect("../Participants?Id=" + eventId);
+                Response.Redirect("../Index");
             }
         }
 
