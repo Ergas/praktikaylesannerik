@@ -1,7 +1,7 @@
 ﻿@page
 @model AddParticipant
 @{
-    if (Model.Change == 1)
+    if (Model.IsChanging)
     {
         ViewData["Title"] = "Osaleja muutmine";
     } else
@@ -13,7 +13,7 @@
 <div class="bg-white">
     <div class="grid-container-add-event">
         @{
-            if (Model.Change == 1)
+            if (Model.IsChanging)
             {
                 <div class="grid-item-add-event bg-blue">Osaleja muutmine</div>
             }
@@ -42,61 +42,59 @@
 
     </div>
 
-
-
-
     <div class="add-event-form">
         <div class="add-event-caption">
             Osavõtjate lisamine
         </div>
         @{
-            if (!Model.IsPrivate && !Model.IsCompany)
+            if (Model.Client.ClientTypeId.Equals(0))
             {
                 <form action="" method="get">
-                    <input class="form-container-detail" type="radio" name="clientType" value="eraisik" checked />
+                    <input class="form-container-detail" type="radio" name="clientType" value="1" checked />
                     <label class="form-container-detail" for="clientType">Eraisik</label>
-                    <input class="form-container-detail" type="radio" name="clientType" value="firma" />
+                    <input class="form-container-detail" type="radio" name="clientType" value="2" />
                     <label class="form-container-detail" for="clientType">Ettevõte</label>
-                    <input name="id" value="@Model.EventToShow.EventId" hidden />
+                    <input name="eventId" value="@Model.EventToShow.EventId" hidden />
                     <a href="../Index"><input type="button" class="form-button" value="Tagasi" /></a>
                     <input class="form-button bg-blue" type="submit" value="Vali" />
                 </form>
             } else
             {
-                <form action="" method="post">
+                <form action="?eventId=@Model.EventToShow.EventId&guestId=@Model.Client.GuestId&change=@Model.IsChanging" method="post">
                     <div class="form-container">
                         @{
-                            if (!Model.IsCompany && Model.IsPrivate)
+                            if (Model.Client.ClientTypeId.Equals(1))
                             {
                                 <label class="form-container-detail" for="firstName">Eesnimi:</label>
-                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.GuestToShow.FirstName" />
+                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" />
                                 <label class="form-container-detail" for="lastName">Perenimi:</label>
-                                <input class="form-container-detail" type="text" id="lastName" name="lastName" value="@Model.GuestToShow.LastName" />
+                                <input class="form-container-detail" type="text" id="lastName" name="lastName" value="@Model.Client.LastName" />
                                 <label class="form-container-detail" for="idNumber">Isikukood:</label>
-                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.GuestToShow.IdNumber" />
+                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" />
                                 <input type="text" name="clientType" value="false" hidden />
                             }
-                            else
+                            else if (Model.Client.ClientTypeId.Equals(2))
                             {
                                 <label class="form-container-detail" for="firstName">Ettevõtte nimi:</label>
-                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.GuestToShow.FirstName" />
+                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" />
                                 <label class="form-container-detail" for="lastName">Osalejate arv:</label>
-                                <input class="form-container-detail" type="number" id="lastName" name="lastName" value="@Model.GuestToShow.LastName" />
+                                <input class="form-container-detail" type="number" id="lastName" name="lastName" value="@Model.Client.LastName" />
                                 <label class="form-container-detail" for="idNumber">Registrikood:</label>
-                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.GuestToShow.IdNumber" />
+                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" />
                                 <input type="text" name="clientType" value="true" hidden />
                             }
                         }
                         <label class="form-container-detail" for="payment">Maksmisviis:</label>
                         <select class="form-container-detail" name="payment" id="payment">
-                            <option value="Sularaha">Sularaha</option>
-                            <option value="Pangaülekanne">Pangaülekanne</option>
+                            @{
+                                foreach (PaymentType type in Model.PaymentTypes)
+                                {
+                                    <option value="@type.PaymentTypeId">@type.Name</option>
+                                }
+                            }
                         </select>
                         <label class="form-container-detail" for="addInfo">Lisainfo:</label>
                         <textarea class="form-container-detail" id="addInfo" name="addInfo" rows="3" cols="60" maxlength="5000"></textarea>
-                        <input type="number" name="eventId" value="@Model.EventToShow.EventId" hidden />
-                        <input type="number" name="guestId" value="@Model.GuestToShow.GuestId" hidden />
-                        <input type="text" name="change" value="@Model.Change" hidden />
                     </div>
                     <br />
                     <br />

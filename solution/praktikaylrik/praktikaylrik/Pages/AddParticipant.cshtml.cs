@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Numerics;
@@ -10,153 +11,97 @@ namespace praktikaylrik.Pages
 {
     public class AddParticipant : PageModel
     {
-        private readonly ILogger<AddParticipant> _logger;
-        public Guest GuestToShow { get; set; } = new Guest()
+        public Event EventToShow { get; set; } = new Event();
+
+        public List<string> Errors { get; set; } = new List<string>();
+
+        public List<PaymentType> PaymentTypes { get; set; } = new List<PaymentType>();
+
+        public Guest Client { get; set; } = new Guest()
         {
             FirstName = "",
             LastName = "",
             IdNumber = "",
             AddInfo = "",
+            ClientTypeId = 0
         };
 
-        public Event EventToShow { get; set; }
+        public bool IsChanging = false;
 
-        public List<string> Errors { get; set; } = new List<string>();
+        private SqlConnection? cnn;
+        private SqlCommand? command;
+        private SqlDataReader? dataReader;
 
-        public bool IsCompany = false;
-        public bool IsPrivate = false;
-        public int Change = 0;
-
-        public AddParticipant(ILogger<AddParticipant> logger)
-        {
-            _logger = logger;
-        }
-
-        public void OnGet(int id, string clientType, int changeDetails, int clientId)
-        {
-            GetEvent(id);
-            GuestToShow.GuestId = -1;
-            if (changeDetails == 1)
-            {
-                Change = changeDetails;
-                GetGuest(clientId);
-            }
-            
-            if (!string.IsNullOrEmpty(clientType))
-            {
-                if (clientType.Equals("firma"))
-                {
-                    IsCompany = true;
-                    IsPrivate = false;
-                    GuestToShow.IsCompany = true;
-                } else if (clientType.Equals("eraisik"))
-                {
-                    IsCompany = false;
-                    IsPrivate = true;
-                    GuestToShow.IsCompany = false;
-                } else
-                {
-                    Response.Redirect("../AddParticipant?id=" + id);
-                }
-            }
-            
-        }
-
-        public void OnPost(bool isCompany, string firstName, string lastName, string idNumber, string payment, string addInfo, int eventId, int guestId, int change)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        public void OnGet(int eventId, int guestId, bool change)
         {
             GetEvent(eventId);
-            if (isCompany) {
-                System.Diagnostics.Debug.WriteLine("firma: p2ringust " + isCompany.ToString() + " ja get-ist: " + IsCompany);
-                if (firstName == null || firstName.Length < 3)
+            GetPaymentTypes();
+            if (change)
+            {
+                GetGuest(guestId);
+            }
+            if (change)
+            {
+                IsChanging = true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <param name="guestId"></param>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="clientTypeId"></param>
+        /// <param name="idNumber"></param>
+        /// <param name="paymentTypeId"></param>
+        /// <param name="addInfo"></param>
+        /// <param name="isChanging"></param>
+        public void OnPost(int eventId, int guestId, string firstName, string lastName, int clientTypeId, string idNumber, int paymentTypeId, string addInfo, bool isChanging)
+        {
+            GetEvent(eventId);
+
+            // Check if all the fields are filled as required
+            if (clientTypeId.Equals(1))
+            {
+                // first check for private person
+                if (firstName != null && firstName.Length < 2)
                 {
-                    Errors.Add("Kontrolli ettevõtte nime!");
+                    Errors.Add("Kontrolli eesnime, pikkus peaks olema vähemalt 2 märki.");
                 }
-                if (lastName == null)
+                if (lastName != null && lastName.Length < 2)
                 {
-                    lastName = "0";
+                    Errors.Add("Kontrolli perenime, pikkus peaks olema vähemalt 2 märki.");
                 }
-                if (idNumber == null || idNumber.Length != 8)
+                if (idNumber != null && !idNumber.Length.Equals(11))
                 {
-                    Errors.Add("Kontrolli ettevõtte registrikoodi (vale arv numbreid)!");
+                    Errors.Add("Kontrolli isikukoodi, pikkus peaks olema 11 numbrit.");
                 }
             } else
             {
-                if (firstName == null || firstName.Length < 2)
+                // then check for business
+                if (firstName != null && firstName.Length < 2)
                 {
-                    Errors.Add("Kontrolli eesnime!");
+                    Errors.Add("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
                 }
-                if (lastName == null || lastName.Length < 2)
+
+                lastName ??= "0";
+
+                if (idNumber != null && !idNumber.Length.Equals(8))
                 {
-                    Errors.Add("Kontrolli perekonnanime!");
-                }
-                if (idNumber == null || idNumber.Length != 11)
-                {
-                    Errors.Add("Kontrolli isikukoodi (vale arv numbreid)!");
+                    Errors.Add("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
                 }
             }
 
-            if (Errors.Count == 0)
+            if (Errors.Count.Equals(0))
             {
-                GuestToShow = new Guest
-                {
-                    FirstName = firstName!,
-                    LastName = lastName!,
-                    IdNumber = idNumber!,
-                    IsCompany = (bool)IsCompany,
-                    EventId = (int)eventId,
-                    PaymentType = payment,
-                    AddInfo = addInfo
-                };
-
-                string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
-                SqlConnection cnn;
-                SqlCommand command;
-
-                cnn = new SqlConnection(connectionString);
-
-                cnn.Open();
-
-                command = cnn.CreateCommand();
-
-                if (change == 1)
-                {
-                    command.CommandText = "UPDATE guest SET first_name = @fname, last_name = @lname, id_number = @idNumber, payment_type = @payment, add_info = @addInfo WHERE guest_id = @guestId;SELECT CAST(scope_identity() AS int)";
-                    command.Parameters.AddWithValue("@fname", GuestToShow.FirstName);
-                    command.Parameters.AddWithValue("@lname", GuestToShow.LastName);
-                    command.Parameters.AddWithValue("@idNumber", GuestToShow.IdNumber);
-                    command.Parameters.AddWithValue("@payment", GuestToShow.PaymentType);
-                    if (addInfo != null)
-                    {
-                        command.Parameters.AddWithValue("@addInfo", GuestToShow.AddInfo);
-                    }
-                    else
-                    {
-                        command.Parameters.AddWithValue("@addInfo", "");
-                    }
-                    command.Parameters.AddWithValue("@guestId", guestId);
-                }
-                else
-                {
-                    command.CommandText = "INSERT INTO[dbo].[guest] ([first_name], [last_name], [is_company], [id_number], [payment_type], [add_info], [event_id]) VALUES( N'@fname', N'@lname', N'"+ GuestToShow.IsCompany + "', N'@idNumber', N'@payment', N'@addInfo', N'@eventId');";
-                    command.Parameters.AddWithValue("@fname", GuestToShow.FirstName);
-                    command.Parameters.AddWithValue("@lname", GuestToShow.LastName);
-                    command.Parameters.AddWithValue("@idNumber", GuestToShow.IdNumber);
-                    command.Parameters.AddWithValue("@payment", GuestToShow.PaymentType);
-                    command.Parameters.AddWithValue("@eventId", GuestToShow.EventId);
-                    //command.Parameters.AddWithValue("@isCompany", GuestToShow.IsCompany);
-                    if (addInfo != null)
-                    {
-                        command.Parameters.AddWithValue("@addInfo", GuestToShow.AddInfo);
-                    }
-                    else
-                    {
-                        command.Parameters.AddWithValue("@addInfo", "");
-                    }
-                }
-
-                command.ExecuteScalar();
-
-                cnn.Close();
+                // Create client as object
+                CreateGuest(eventId, guestId, firstName!, lastName!, clientTypeId, idNumber!, paymentTypeId, addInfo, isChanging);
 
                 Response.Redirect("../Participants?id=" + eventId);
             }
@@ -164,20 +109,19 @@ namespace praktikaylrik.Pages
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventId"></param>
         private void GetEvent(int eventId)
         {
-            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
-            SqlConnection cnn;
-            SqlCommand command;
-            string sql;
-            SqlDataReader dataReader;
-
-            cnn = new SqlConnection(connectionString);
+            cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
 
-            sql = "SELECT * FROM event WHERE event_id = " + eventId;
-
+            
+            string sql = "SELECT * FROM event WHERE event_id = " + eventId;
             command = new SqlCommand(sql, cnn);
+            //command.Parameters.AddWithValue("@eventId", eventId);
 
             dataReader = command.ExecuteReader();
 
@@ -188,7 +132,7 @@ namespace praktikaylrik.Pages
                 string location = (string)dataReader["location"];
                 string addInfo;
 
-                if (!dataReader["add_info"].Equals(System.DBNull.Value))
+                if (!dataReader["add_info"].Equals(DBNull.Value))
                 {
                     addInfo = (string)dataReader["add_info"];
                 } else
@@ -208,49 +152,135 @@ namespace praktikaylrik.Pages
             }
 
             dataReader.Close();
+            command.Dispose();
             cnn.Close();   
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
         private void GetGuest(int id)
         {
-            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
-            SqlConnection cnn;
-            SqlCommand command;
-            string sql;
-            SqlDataReader dataReader;
 
-            cnn = new SqlConnection(connectionString);
+            cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
 
-            sql = "SELECT * FROM guest WHERE guest_id=" + id;
-
-            command = new SqlCommand(sql, cnn);
+            command = cnn.CreateCommand();
+            command.CommandText = "SELECT * FROM guest WHERE guest_id=@id;";
+            command.Parameters.AddWithValue("@id", id);
 
             dataReader = command.ExecuteReader();
 
             if (dataReader.Read())
             {
-                GuestToShow = new Guest()
+                Client = new Guest()
                 {
                     GuestId = id,
                     FirstName = (string)dataReader["first_name"],
                     LastName = (string)dataReader["last_name"],
                     EventId = (int)dataReader["event_id"],
-                    IsCompany = (bool)dataReader["is_company"],
+                    ClientTypeId = (int)dataReader["client_type_id"],
                     IdNumber = (string)dataReader["id_number"],
-                    PaymentType = (string)dataReader["payment_type"]
+                    PaymentTypeId = (int)dataReader["payment_type_id"]
                 };
 
                 if (!dataReader["add_info"].Equals(System.DBNull.Value))
                 {
-                    GuestToShow.AddInfo = (string)dataReader["add_info"];
+                    Client.AddInfo = (string)dataReader["add_info"];
                 }
                 else
                 {
-                    GuestToShow.AddInfo = "";
+                    Client.AddInfo = "";
                 }
             }
 
+            cnn.Close();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <param name="guestId"></param>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="clientTypeId"></param>
+        /// <param name="idNumber"></param>
+        /// <param name="paymentTypeId"></param>
+        /// <param name="addInfo"></param>
+        /// <param name="isChanging"></param>
+        private void CreateGuest(int eventId, int guestId, string firstName, string lastName, int clientTypeId, string idNumber, int paymentTypeId, string addInfo, bool isChanging)
+        {
+            Client = new Guest()
+            {
+                FirstName = firstName!,
+                LastName = lastName!,
+                ClientTypeId = clientTypeId,
+                IdNumber = idNumber!,
+                PaymentTypeId = paymentTypeId,
+                EventId = eventId,
+            };
+
+            if (addInfo != null)
+            {
+                Client.AddInfo = addInfo;
+            }
+            else
+            {
+                Client.AddInfo = "";
+            }
+
+            SqlConnection cnn = new SqlConnection(DatabaseConnection.ConnectionString);
+            SqlCommand command = cnn.CreateCommand();
+
+            // Either update or insert a new object (Guest) into database
+            if (isChanging)
+            {
+                command.CommandText = "UPDATE guest SET first_name=@fname, last_name=@lname, id_number=@idNumber, payment_type_id=@paymentTypeId, add_info=@addInfo WHERE guest_id=@guestId;";
+                command.Parameters.AddWithValue("@guestId", guestId);
+            }
+            else
+            {
+                command.CommandText = "INSERT INTO guest (first_name, last_name, id_number, payment_type_id, add_info, event_id) VALUES(@fname, @lname, @idNumber, @paymentTypeId, @addInfo, @eventId;";
+                command.Parameters.AddWithValue("@eventId", eventId);
+                command.Parameters.AddWithValue("@clientType", Client.ClientTypeId);
+            }
+            command.Parameters.AddWithValue("@fname", Client.FirstName);
+            command.Parameters.AddWithValue("@lname", Client.LastName);
+            command.Parameters.AddWithValue("@idNumber", Client.IdNumber);
+            command.Parameters.AddWithValue("@paymentTypeId", Client.PaymentTypeId);
+            command.Parameters.AddWithValue("@addInfo", Client.AddInfo);
+
+
+            command.ExecuteScalar();
+            cnn.Close();
+        }
+   
+        private void GetPaymentTypes()
+        {
+            cnn = new SqlConnection(DatabaseConnection.ConnectionString);
+            cnn.Open();
+
+            command = cnn.CreateCommand();
+            command.CommandText = "SELECT * FROM payments;";
+
+            dataReader = command.ExecuteReader();
+
+            while (dataReader.Read())
+            {
+                int id = (int)dataReader["payment_type_id"];
+                string name = (string)dataReader["name"];
+
+                PaymentTypes.Add(new PaymentType()
+                {
+                    PaymentTypeId = id,
+                    Name = name,
+                });
+            }
+
+            dataReader.Close();
+            command.Dispose();
             cnn.Close();
         }
     }

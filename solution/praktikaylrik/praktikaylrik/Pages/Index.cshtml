@@ -28,7 +28,6 @@
             Toimunud üritused
         </div>
     </div>
-
     <div class="container-event">
         <div class="event-list-event">
             <div class="element-event-list fw-bold">Ürituse nimi</div>
@@ -42,7 +41,7 @@
                 <div class="element-event-list">@count. <a href="/Participants?id=@e.EventId">@e.Name</a></div>
                 <div class="element-event-list">@e.EventDate.ToString("dd.MM.yyyy")</div>
                 <div class="element-event-list">@e.Location</div>
-                <div class="element-event-list">@Model.GuestCount[e.EventId] <a href="/AddParticipant?id=@e.EventId">Lisa osaleja</a></div>
+                <div class="element-event-list">@Model.GuestCount[e.EventId] <a href="/AddParticipant?eventId=@e.EventId">Lisa osaleja</a></div>
                 <div class="element-event-list"><form action="" method="post"><input name="deleteId" id="deleteId" value="@e.EventId" hidden /><input class="delete-from-list" type="submit" value="X" /></form></div>
                 {
                     count++;

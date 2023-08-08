@@ -27,13 +27,12 @@ namespace praktikaylrik.Pages
         {
             if (!string.IsNullOrEmpty(delete))
             {
-                string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
                 SqlConnection cnn;
                 SqlCommand command;
                 string sql;
                 SqlDataReader dataReader;
 
-                cnn = new SqlConnection(connectionString);
+                cnn = new SqlConnection(DatabaseConnection.ConnectionString);
                 cnn.Open();
 
                 sql = "DELETE FROM [dbo].[guest] WHERE guest_id=" + guestId;
@@ -47,79 +46,14 @@ namespace praktikaylrik.Pages
             GetEvent(id);
         }
 
-        public void OnPost(bool clientType, string firstName, string lastName, string idNumber, string payment, string addInfo, int eventId)
-        {
-            GetEvent(eventId);
-            if (clientType) {
-                if (firstName == null || firstName.Length < 3)
-                {
-                    Errors.Add("Kontrolli ettevõtte nime!");
-                }
-                if (idNumber == null || idNumber.Length != 8)
-                {
-                    Errors.Add("Kontrolli ettevõtte registrikoodi (vale arv numbreid)!");
-                }
-            } else
-            {
-                if (firstName == null || firstName.Length < 2)
-                {
-                    Errors.Add("Kontrolli eesnime!");
-                }
-                if (lastName == null || lastName.Length < 2)
-                {
-                    Errors.Add("Kontrolli perekonnanime!");
-                }
-                if (idNumber == null || idNumber.Length != 11)
-                {
-                    Errors.Add("Kontrolli isikukoodi (vale arv numbreid)!");
-                }
-            }
-
-            if (Errors.Count == 0)
-            {
-                GuestToShow = new Guest
-                {
-                    FirstName = firstName!,
-                    LastName = lastName,
-                    IdNumber = idNumber!,
-                    IsCompany = clientType,
-                    EventId = eventId,
-                    PaymentType = payment,
-                    AddInfo = addInfo
-                };
-
-                string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
-                SqlConnection cnn;
-                SqlCommand command;
-                string sql;
-
-                sql = "INSERT INTO[dbo].[guest] ([first_name], [last_name], [is_company], [id_number], [payment_type], [add_info], [event_id]) VALUES( N'" + GuestToShow.FirstName + "', N'" + GuestToShow.LastName + "', N'" + GuestToShow.IsCompany + "', N'" + GuestToShow.IdNumber + "', N'" + GuestToShow.PaymentType + "', N'" + GuestToShow.AddInfo + "', N'" + GuestToShow.EventId + "');SELECT CAST(scope_identity() AS int)";
-
-                cnn = new SqlConnection(connectionString);
-
-                cnn.Open();
-
-                command = new SqlCommand(sql, cnn);
-
-                command.ExecuteScalar();
-
-                cnn.Close();
-
-                Response.Redirect("../Index");
-            }
-
-
-        }
-
         private void GetEvent(int eventId)
         {
-            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
             SqlConnection cnn;
             SqlCommand command;
             string sql;
             SqlDataReader dataReader;
 
-            cnn = new SqlConnection(connectionString);
+            cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
 
             sql = "SELECT * FROM event WHERE event_id = " + eventId;
@@ -169,9 +103,9 @@ namespace praktikaylrik.Pages
                     GuestId = (int)dataReader["guest_id"],
                     FirstName = (string)dataReader["first_name"],
                     LastName = (string)dataReader["last_name"],
-                    IsCompany = (bool)dataReader["is_company"],
+                    ClientTypeId = (int)dataReader["client_type_id"],
                     IdNumber = (string)dataReader["id_number"],
-                    PaymentType = (string)dataReader["payment_type"],
+                    PaymentTypeId = (int)dataReader["payment_type_id"],
                     AddInfo = (string)dataReader["add_info"],
                     EventId = eventId
                 });

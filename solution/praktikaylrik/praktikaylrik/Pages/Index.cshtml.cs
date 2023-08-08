@@ -23,7 +23,6 @@ namespace praktikaylrik.Pages
 
         public void OnGet()
         {
-            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
             Event eventObj;
             SqlConnection cnn;
             SqlCommand command;
@@ -31,7 +30,7 @@ namespace praktikaylrik.Pages
             string sqlForGuests;
             SqlDataReader dataReader;
 
-            cnn = new SqlConnection(connectionString);
+            cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
 
             sql = "SELECT * FROM event";
@@ -107,11 +106,10 @@ namespace praktikaylrik.Pages
 
         public void OnPost(int deleteId)
         {
-            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
             SqlConnection cnn;
             SqlCommand command;
 
-            cnn = new SqlConnection(connectionString);
+            cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
 
             command = cnn.CreateCommand();

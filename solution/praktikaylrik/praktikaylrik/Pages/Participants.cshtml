@@ -33,14 +33,14 @@
                     @foreach (Guest guest in @Model.guests)
                         {
                         
-                            if (guest.IsCompany)
+                            if (guest.ClientTypeId.Equals(2))
                             {
                                 <div>@count. @guest.FirstName (@guest.LastName osalejat)</div>
                                 <div>@guest.IdNumber</div>
                                 <div><a href="AddParticipant?id=@Model.EventToShow.EventId&clientType=firma&changeDetails=1&clientId=@guest.GuestId">Vaata</a></div>
                             } else
                             {
-                                <div>@count. @guest.FirstName @guest.LastName osalejat</div>
+                                <div>@count. @guest.FirstName @guest.LastName</div>
                             <div>@guest.IdNumber</div>
                             <div><a href="AddParticipant?id=@Model.EventToShow.EventId&clientType=eraisik&changeDetails=1&clientId=@guest.GuestId">Vaata</a></div>
                             }
