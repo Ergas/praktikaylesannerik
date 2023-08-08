@@ -54,7 +54,7 @@ namespace praktikaylrik.Pages
                 string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
                 SqlConnection cnn;
                 SqlCommand command;
-                String sql;
+                string sql;
 
                 sql = "INSERT INTO[dbo].[event] ([event_name], [event_date], [location], [add_info]) VALUES( N'" + name + "', N'" + date.ToString("yyyy-MM-dd HH:mm:ss") + "', N'" + location + "', N'" + addInfo + "')";
 

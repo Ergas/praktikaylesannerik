@@ -174,7 +174,7 @@ body {
 .form-container {
     padding-top: 1rem;
     display: grid;
-    grid-template-columns: 150px 300px;
+    grid-template-columns: 170px 300px;
     text-align: left;
 }
 

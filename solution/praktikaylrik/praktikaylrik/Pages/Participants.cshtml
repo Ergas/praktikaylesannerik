@@ -29,8 +29,8 @@
             <div>
                 <br />
                 <div class="participants-list">
-                    @{int count = 0;}
-                    @foreach (Guest guest in Model.guests)
+                    @{int count = 1;}
+                    @foreach (Guest guest in @Model.guests)
                         {
                             <div>@count. @guest.FirstName @guest.LastName</div>
                             <div>@guest.IdNumber</div>
@@ -53,29 +53,37 @@
             Osavõtjate lisamine
         </div>
         <form action="" method="post">
-            <input class="form-container-detail" type="radio" name="clientType" value="Eraisik" />
+            <input class="form-container-detail" type="radio" name="clientType" value="false" checked/>
             <label class="form-container-detail" for="fname">Eraisik</label>
-            <input class="form-container-detail" type="radio" name="clientType" value="Ettevõte" />
-            <label class="form-container-detail" for="fname">Ettevõte</label>
+            <input class="form-container-detail" type="radio" name="clientType" value="true" />
+            <label class="form-container-detail" for="firstName">Ettevõte</label>
             <div class="form-container">
-                <label class="form-container-detail" for="fname">Eesnimi</label>
-                <input class="form-container-detail" type="text" id="fname" name="fname" />
-                <label class="form-container-detail" for="lname">Perenimi:</label>
-                <input class="form-container-detail" type="text" id="lname" name="lname" />
-                <label class="form-container-detail" for="idcode">Isikukood:</label>
-                <input class="form-container-detail" type="number" id="idcode" name="idcode" />
+                <label class="form-container-detail" for="firstName">Eesnimi/Ettevõtte nimi:</label>
+                <input class="form-container-detail" type="text" id="firstName" name="firstName" />
+                <label class="form-container-detail" for="lastName">Perenimi:</label>
+                <input class="form-container-detail" type="text" id="lastName" name="lastName" />
+                <label class="form-container-detail" for="idNumber">Isikukood:</label>
+                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" />
                 <label class="form-container-detail" for="payment">Maksmisviis:</label>
                 <select class="form-container-detail" name="payment" id="payment">
-                    <option>Sularaha</option>
-                    <option>Pangaülekanne</option>
+                    <option value="Sularaha">Sularaha</option>
+                    <option value="Pangaülekanne">Pangaülekanne</option>
                 </select>
-                <label class="form-container-detail" for="add-info">Lisainfo:</label>
-                <textarea class="form-container-detail" id="add-info" name="add-info" rows="3" cols="60"></textarea>
+                <label class="form-container-detail" for="addInfo">Lisainfo:</label>
+                <textarea class="form-container-detail" id="addInfo" name="addInfo" rows="3" cols="60"></textarea>
+                <input type="number" name="eventId" value="@Model.EventToShow.EventId" hidden/>
             </div>
             <br />
             <br />
             <input class="form-button" type="button" value="Tagasi" />
             <input class="form-button bg-blue" type="submit" value="Salvesta" />
         </form>
+    </div>
+
+    <div>
+        @foreach (string error in Model.Errors)
+        {
+            <p class="error">@error</p>
+        }
     </div>
 </div>

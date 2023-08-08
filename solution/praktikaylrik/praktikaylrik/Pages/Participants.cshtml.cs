@@ -3,15 +3,20 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Numerics;
+using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace praktikaylrik.Pages
 {
     public class Participants : PageModel
     {
-
         private readonly ILogger<Participants> _logger;
-        public Event EventToShow { get; set; }
         public List<Guest> guests = new List<Guest>();
+        private Guest GuestToShow { get; set; }
+
+        public Event EventToShow { get; set; }
+
+        public List<string> Errors { get; set; } = new List<string>();
 
         public Participants(ILogger<Participants> logger)
         {
@@ -20,16 +25,85 @@ namespace praktikaylrik.Pages
 
         public void OnGet(int id)
         {
+            GetEvent(id);
+        }
+
+        public void OnPost(bool clientType, string firstName, string lastName, string idNumber, string payment, string addInfo, int eventId)
+        {
+            GetEvent(eventId);
+            if (clientType) {
+                if (firstName == null || firstName.Length < 3)
+                {
+                    Errors.Add("Kontrolli ettevõtte nime!");
+                }
+                if (idNumber == null || idNumber.Length != 8)
+                {
+                    Errors.Add("Kontrolli ettevõtte registrikoodi (vale arv numbreid)!");
+                }
+            } else
+            {
+                if (firstName == null || firstName.Length < 2)
+                {
+                    Errors.Add("Kontrolli eesnime!");
+                }
+                if (lastName == null || lastName.Length < 2)
+                {
+                    Errors.Add("Kontrolli perekonnanime!");
+                }
+                if (idNumber == null || idNumber.Length != 11)
+                {
+                    Errors.Add("Kontrolli isikukoodi (vale arv numbreid)!");
+                }
+            }
+
+            if (Errors.Count == 0)
+            {
+                GuestToShow = new Guest
+                {
+                    FirstName = firstName!,
+                    LastName = lastName,
+                    IdNumber = idNumber!,
+                    IsCompany = clientType,
+                    EventId = eventId,
+                    PaymentType = payment,
+                    AddInfo = addInfo
+                };
+
+                string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
+                SqlConnection cnn;
+                SqlCommand command;
+                string sql;
+
+                sql = "INSERT INTO[dbo].[guest] ([first_name], [last_name], [is_company], [id_number], [payment_type], [add_info], [event_id]) VALUES( N'" + GuestToShow.FirstName + "', N'" + GuestToShow.LastName + "', N'" + GuestToShow.IsCompany + "', N'" + GuestToShow.IdNumber + "', N'" + GuestToShow.PaymentType + "', N'" + GuestToShow.AddInfo + "', N'" + GuestToShow.EventId + "');SELECT CAST(scope_identity() AS int)";
+
+                cnn = new SqlConnection(connectionString);
+
+                cnn.Open();
+
+                command = new SqlCommand(sql, cnn);
+
+                command.ExecuteScalar();
+
+                cnn.Close();
+
+                Response.Redirect("?id=" + eventId);
+            }
+
+
+        }
+
+        private void GetEvent(int eventId)
+        {
             string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
             SqlConnection cnn;
             SqlCommand command;
-            String sql;
+            string sql;
             SqlDataReader dataReader;
-            
+
             cnn = new SqlConnection(connectionString);
             cnn.Open();
 
-            sql = "SELECT * FROM event WHERE event_id = " + id;
+            sql = "SELECT * FROM event WHERE event_id = " + eventId;
 
             command = new SqlCommand(sql, cnn);
 
@@ -44,7 +118,7 @@ namespace praktikaylrik.Pages
 
                 EventToShow = new Event
                 {
-                    EventId = id,
+                    EventId = eventId,
                     Name = name,
                     EventDate = dateTime,
                     Location = location,
@@ -52,7 +126,7 @@ namespace praktikaylrik.Pages
                 };
             }
 
-            sql = "SELECT * FROM guest_in_event WHERE event_id = " + id;
+            sql = "SELECT * FROM guest WHERE event_id = " + eventId;
 
             command = new SqlCommand(sql, cnn);
 
@@ -62,30 +136,20 @@ namespace praktikaylrik.Pages
 
             while (dataReader.Read())
             {
-                int guestId = (int)dataReader["guest_id"];
-
-                sql = "SELECT * FROM guest WHERE guest_id = " + guestId;
-
-                command = new SqlCommand(sql, cnn);
-                dataReader.Close();
-                dataReader = command.ExecuteReader();
-                if (dataReader.Read())
+                guests.Add(new Guest
                 {
-                    guests.Add(new Guest
-                    {
-                        GuestId = guestId,
-                        FirstName = (string)dataReader["first_name"],
-                        LastName = (string)dataReader["last_name"],
-                        IsCompany = (bool)dataReader["is_company"],
-                        IdNumber = (BigInteger)dataReader["id_number"]
-                    });;
-                }
+                    GuestId = (int)dataReader["guest_id"],
+                    FirstName = (string)dataReader["first_name"],
+                    LastName = (string)dataReader["last_name"],
+                    IsCompany = (bool)dataReader["is_company"],
+                    IdNumber = (string)dataReader["id_number"],
+                    PaymentType = (string)dataReader["payment_type"],
+                    AddInfo = (string)dataReader["add_info"],
+                    EventId = eventId
+                });
             }
-        }
 
-        public void OnPost(string firstName,  string lastName, BigInteger idNumber, int paymentTypeId, string addInfo)
-        {
-
+            dataReader.Close();
         }
     }
 }

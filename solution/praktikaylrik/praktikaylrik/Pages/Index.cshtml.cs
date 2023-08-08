@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
+using System.Net.NetworkInformation;
 using System.Reflection.Metadata;
 using System.Web;
 
@@ -44,7 +45,15 @@ namespace praktikaylrik.Pages
                 string name = (string)dataReader["event_name"];
                 DateTime dateTime = (DateTime)dataReader["event_date"];
                 string location = (string)dataReader["location"];
-                string addInfo = (string)dataReader["add_info"];
+                string addInfo;
+                if (!dataReader["add_info"].Equals(System.DBNull.Value))
+                {
+                    addInfo = (string)dataReader["add_info"];
+                } else
+                {
+                    addInfo = "";
+                }
+                
 
                 eventObj = new Event();
 

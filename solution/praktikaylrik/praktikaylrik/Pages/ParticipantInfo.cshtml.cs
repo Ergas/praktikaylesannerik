@@ -5,8 +5,9 @@ namespace praktikaylrik.Pages
 {
     public class ParticipantInfoModel : PageModel
     {
-        public void OnGet()
+        public void OnGet(int id)
         {
+
         }
     }
 }
