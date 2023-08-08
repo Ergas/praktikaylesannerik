@@ -1,7 +1,7 @@
 ﻿@page
 @model AddParticipant
 @{
-    if (Model.IsChanging)
+    if (Model.ChangeDetails == 1)
     {
         ViewData["Title"] = "Osaleja muutmine";
     } else
@@ -13,7 +13,7 @@
 <div class="bg-white">
     <div class="grid-container-add-event">
         @{
-            if (Model.IsChanging)
+            if (Model.ChangeDetails == 1)
             {
                 <div class="grid-item-add-event bg-blue">Osaleja muutmine</div>
             }
@@ -87,15 +87,23 @@
                             @{
                                 foreach (PaymentType type in Model.PaymentTypes)
                                 {
-                                    <option value="@type.PaymentTypeId">@type.Name</option>
+                                    
+                                    if (type.PaymentTypeId == Model.Client.PaymentTypeId)
+                                    {
+                                        <option value="@type.PaymentTypeId" selected="selected">@type.Name</option>
+                                    } else
+                                    {
+                                        <option value="@type.PaymentTypeId">@type.Name</option>
+                                    }
                                 }
                             }
                         </select>
                         <label class="form-container-detail" for="addInfo">Lisainfo:</label>
-                        <textarea class="form-container-detail" id="addInfo" name="addInfo" rows="3" cols="60" maxlength="5000"></textarea>
+                        <textarea class="form-container-detail" id="addInfo" name="addInfo" rows="3" cols="60" maxlength="5000">@Model.Client.AddInfo</textarea>
                         <input type="number" name="eventId" value="@Model.EventToShow.EventId" hidden />
                         <input type="number" name="guestId" value="@Model.Client.GuestId" hidden />
                         <input type="number" name="clientTypeId" value="@Model.ClientType" hidden />
+                        <input type="number" name="isChanging" value="@Model.ChangeDetails" hidden />
 
                     </div>
                     <br />

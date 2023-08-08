@@ -25,6 +25,8 @@
             <div>@Model.EventToShow.EventDate.ToString("dd.MM.yyyy HH:mm")</div>
             <div>Koht:</div>
             <div>@Model.EventToShow.Location</div>
+            <div>Lisainfo:</div>
+            <div>@Model.EventToShow.AddInfo</div>
             <div>Osavõtjad:</div>
             <div>
                 <br />
@@ -36,14 +38,14 @@
                             if (guest.ClientTypeId.Equals(2))
                             {
                                 <div>@count. @guest.FirstName (@guest.LastName osalejat)</div>
-                                <div>@guest.IdNumber</div>
-                                <div><a href="AddParticipant?id=@Model.EventToShow.EventId&clientType=firma&changeDetails=1&clientId=@guest.GuestId">Vaata</a></div>
+
                             } else
                             {
                                 <div>@count. @guest.FirstName @guest.LastName</div>
-                            <div>@guest.IdNumber</div>
-                            <div><a href="AddParticipant?id=@Model.EventToShow.EventId&clientType=eraisik&changeDetails=1&clientId=@guest.GuestId">Vaata</a></div>
                             }
+
+                        <div>@guest.IdNumber</div>
+                        <div><a href="AddParticipant?eventId=@Model.EventToShow.EventId&clientType=@guest.ClientTypeId&changeDetails=1&guestId=@guest.GuestId">Vaata</a></div>
                         
                             
                             <div><a href="Participants?id=@Model.EventToShow.EventId&guestId=@guest.GuestId&delete=y">Kustuta</a></div>

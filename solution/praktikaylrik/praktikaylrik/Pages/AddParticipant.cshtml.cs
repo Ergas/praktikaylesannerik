@@ -26,7 +26,7 @@ namespace praktikaylrik.Pages
             ClientTypeId = 0
         };
 
-        public bool IsChanging = false;
+        public int ChangeDetails = 0;
 
         public int ClientType = 0;
 
@@ -34,17 +34,14 @@ namespace praktikaylrik.Pages
         /// 
         /// </summary>
         /// <param name="id"></param>
-        public void OnGet(int eventId, int guestId, int clientType, bool change)
+        public void OnGet(int eventId, int guestId, int clientType, int changeDetails)
         {
             GetEvent(eventId);
             GetPaymentTypes();
-            if (change)
+            ChangeDetails = changeDetails;
+            if (ChangeDetails == 1)
             {
                 GetGuest(guestId);
-            }
-            if (change)
-            {
-                IsChanging = true;
             }
             if (clientType != 0)
             {
@@ -64,7 +61,7 @@ namespace praktikaylrik.Pages
         /// <param name="paymentTypeId"></param>
         /// <param name="addInfo"></param>
         /// <param name="isChanging"></param>
-        public void OnPost(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId)
+        public void OnPost(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId, int isChanging)
         {
             GetEvent(eventId);
             // Check if all the fields are filled as required
@@ -103,7 +100,7 @@ namespace praktikaylrik.Pages
             if (Errors.Count.Equals(0))
             {
                 // Create client as object
-                CreateGuest(eventId, guestId, firstName!, lastName!, clientTypeId, idNumber!, paymentTypeId, addInfo, IsChanging);
+                CreateGuest(eventId, guestId, firstName!, lastName!, clientTypeId, idNumber!, paymentTypeId, addInfo, isChanging);
 
                 Response.Redirect("../Participants?Id=" + eventId);
             }
@@ -187,9 +184,9 @@ namespace praktikaylrik.Pages
                     FirstName = (string)dataReader["first_name"],
                     LastName = (string)dataReader["last_name"],
                     EventId = (int)dataReader["event_id"],
-                    ClientTypeId = (int)dataReader["client_type_id"],
+                    ClientTypeId = (int)dataReader["client_type"],
                     IdNumber = (string)dataReader["id_number"],
-                    PaymentTypeId = (int)dataReader["payment_type_id"]
+                    PaymentTypeId = (int)dataReader["payment_type"]
                 };
 
                 if (!dataReader["add_info"].Equals(System.DBNull.Value))
@@ -217,7 +214,7 @@ namespace praktikaylrik.Pages
         /// <param name="paymentTypeId"></param>
         /// <param name="addInfo"></param>
         /// <param name="isChanging"></param>
-        private void CreateGuest(int eventId, int guestId, string firstName, string lastName, int clientTypeId, string idNumber, int paymentTypeId, string addInfo, bool isChanging)
+        private void CreateGuest(int eventId, int guestId, string firstName, string lastName, int clientTypeId, string idNumber, int paymentTypeId, string addInfo, int isChanging)
         {
             Client = new Guest()
             {
@@ -246,21 +243,21 @@ namespace praktikaylrik.Pages
             command = cnn.CreateCommand();
 
             // Either update or insert a new object (Guest) into database
-            if (isChanging)
+            if (isChanging == 1)
             {
-                command.CommandText = "UPDATE guest SET first_name=@fname, last_name=@lname, id_number=@idNumber, payment_type_id=@paymentTypeId, add_info=@addInfo WHERE guest_id=@guestId;";
+                command.CommandText = "UPDATE guest SET first_name=@fname, last_name=@lname, id_number=@idNumber, payment_type=@paymentTypeId, add_info=@addInfo WHERE guest_id=@guestId;";
                 command.Parameters.AddWithValue("@guestId", guestId);
             }
             else
             {
-                command.CommandText = "INSERT INTO guest (first_name, last_name, client_type, id_number, payment_type_id, add_info, event_id) VALUES(@fname, @lname, @clientType, @idNumber, @paymentTypeId, @addInfo, @eventId);";
+                command.CommandText = "INSERT INTO guest (first_name, last_name, client_type, id_number, payment_type, add_info, event_id) VALUES(@fname, @lname, @clientType, @idNumber, @paymentTypeId, @addInfo, @eventId);";
                 command.Parameters.AddWithValue("@eventId", eventId);
                 command.Parameters.AddWithValue("@clientType", clientTypeId);
             }
             command.Parameters.AddWithValue("@fname", Client.FirstName);
             command.Parameters.AddWithValue("@lname", Client.LastName);
             command.Parameters.AddWithValue("@idNumber", Client.IdNumber);
-            command.Parameters.AddWithValue("@paymentTypeId", Client.PaymentTypeId);
+            command.Parameters.AddWithValue("@paymentTypeId", paymentTypeId);
             command.Parameters.AddWithValue("@addInfo", Client.AddInfo);
 
 

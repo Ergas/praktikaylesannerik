@@ -105,7 +105,7 @@ namespace praktikaylrik.Pages
                     LastName = (string)dataReader["last_name"],
                     ClientTypeId = (int)dataReader["client_type"],
                     IdNumber = (string)dataReader["id_number"],
-                    PaymentTypeId = (int)dataReader["payment_type_id"],
+                    PaymentTypeId = (int)dataReader["payment_type"],
                     AddInfo = (string)dataReader["add_info"],
                     EventId = eventId
                 });

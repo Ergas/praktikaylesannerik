@@ -9,7 +9,7 @@ namespace praktikaylrik
         public string LastName { get; set; } = "";
         public int ClientTypeId { get; set; } = 0;
         public string IdNumber { get; set; } = "";
-        public int PaymentTypeId { get; set; }
+        public int PaymentTypeId { get; set; } = 0;
         public string AddInfo { get; set; } = "";
         public int EventId { get; set; }
     }
