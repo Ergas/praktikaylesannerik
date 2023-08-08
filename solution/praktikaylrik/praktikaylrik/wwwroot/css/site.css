@@ -112,27 +112,27 @@ body {
     align-content: center;
     padding-top: 1rem;
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 655px 645px;
     font-size: 22px;
     text-align: center;
 }
 
 .event-list-event {
     display: grid;
-    grid-template-columns: 370px 90px 90px 5px;
+    grid-template-columns: 230px 90px 150px 110px 5px;
     font-size: 15px;
     text-align: left;
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .event-list-event-past {
     display: grid;
-    grid-template-columns: 375px 90px 90px;
+    grid-template-columns: 230px 90px 150px 110px;
     font-size: 15px;
     text-align: left;
     padding-left: 2rem;
-    padding-right: 2rem;
+    padding-right: 1rem;
 }
 
 .container-event {
@@ -140,6 +140,14 @@ body {
     margin-bottom: 3rem;
     display: grid;
     grid-template-columns: auto auto; 
+}
+
+.delete-from-list {
+    border-width: 0px;
+}
+
+.element-event-list {
+    padding: 1px;
 }
 
 .grid-container-add-event {

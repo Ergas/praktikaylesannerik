@@ -30,13 +30,20 @@
     </div>
 
     <div class="container-event">
-        <div class="event-list-event-past">
+        <div class="event-list-event">
+            <div class="element-event-list fw-bold">Ürituse nimi</div>
+            <div class="element-event-list fw-bold">Kuupäev</div>
+            <div class="element-event-list fw-bold">Toimumiskoht</div>
+            <div class="element-event-list fw-bold">Osalejad</div>
+            <div class="element-event-list fw-bold"></div>
             @{int count = 1;}
             @foreach (Event e in Model.eventsFuture)
             {
-                <div>@count. @e.Name</div>
-                <div>@e.EventDate.ToString("dd.MM.yyyy")</div>
-                <div><a href="/Participants?id=@e.EventId" class="logo">Osavõtjad</a></div>
+                <div class="element-event-list">@count. <a href="/Participants?id=@e.EventId">@e.Name</a></div>
+                <div class="element-event-list">@e.EventDate.ToString("dd.MM.yyyy")</div>
+                <div class="element-event-list">@e.Location</div>
+                <div class="element-event-list">@Model.GuestCount[e.EventId] <a href="/AddParticipant?id=@e.EventId">Lisa osaleja</a></div>
+                <div class="element-event-list"><form action="" method="post"><input name="deleteId" id="deleteId" value="@e.EventId" hidden /><input class="delete-from-list" type="submit" value="X" /></form></div>
                 {
                     count++;
                 }
@@ -44,16 +51,20 @@
         </div>
     </div>
     <div class="container-event">
-        <div class="event-list-event">      
+        <div class="event-list-event-past">
+            <div class="element-event-list fw-bold">Ürituse nimi</div>
+            <div class="element-event-list fw-bold">Kuupäev</div>
+            <div class="element-event-list fw-bold">Toimumiskoht</div>
+            <div class="element-event-list fw-bold">Osalejad</div>
             @{
                 int countPast = 1;
             }
             @foreach (Event e in Model.eventsPast)
             {
-                <div>@countPast. @e.Name</div>
-                <div>@e.EventDate.ToString("dd.MM.yyyy")</div>
-                <div><a href="/Participants?id=@e.EventId" class="logo">Osavõtjad</a></div>
-                <div>X</div>
+                <div class="element-event-list">@count. <a href="/Participants?id=@e.EventId">@e.Name</a></div>
+                <div class="element-event-list">@e.EventDate.ToString("dd.MM.yyyy")</div>
+                <div class="element-event-list">@e.Location</div>
+                <div class="element-event-list">@Model.GuestCount[e.EventId]</div>
                 {
                     countPast++;
                 }

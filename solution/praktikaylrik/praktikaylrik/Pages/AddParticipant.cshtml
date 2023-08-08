@@ -1,0 +1,117 @@
+﻿@page
+@model AddParticipant
+@{
+    if (Model.Change == 1)
+    {
+        ViewData["Title"] = "Osaleja muutmine";
+    } else
+    {
+        ViewData["Title"] = "Osaleja muutmine";
+    }
+}
+
+<div class="bg-white">
+    <div class="grid-container-add-event">
+        @{
+            if (Model.Change == 1)
+            {
+                <div class="grid-item-add-event bg-blue">Osaleja muutmine</div>
+            }
+            else
+            {
+                <div class="grid-item-add-event bg-blue">Osaleja lisamine</div>
+            }
+        }
+        <div><img class="add-event-img" src="~/libled.jpg" /></div>
+    </div>
+
+    <div class="participants-body">
+
+        <div class="add-event-caption">
+            Sündmus
+        </div>
+
+        <div class="participants">
+            <div>Ürituse nimi:</div>
+            <div>@Model.EventToShow.Name</div>
+            <div>Toimumisaeg:</div>
+            <div>@Model.EventToShow.EventDate.ToString("dd.MM.yyyy HH:mm")</div>
+            <div>Koht:</div>
+            <div>@Model.EventToShow.Location</div>
+        </div>
+
+    </div>
+
+
+
+
+    <div class="add-event-form">
+        <div class="add-event-caption">
+            Osavõtjate lisamine
+        </div>
+        @{
+            if (!Model.IsPrivate && !Model.IsCompany)
+            {
+                <form action="" method="get">
+                    <input class="form-container-detail" type="radio" name="clientType" value="eraisik" checked />
+                    <label class="form-container-detail" for="clientType">Eraisik</label>
+                    <input class="form-container-detail" type="radio" name="clientType" value="firma" />
+                    <label class="form-container-detail" for="clientType">Ettevõte</label>
+                    <input name="id" value="@Model.EventToShow.EventId" hidden />
+                    <a href="../Index"><input type="button" class="form-button" value="Tagasi" /></a>
+                    <input class="form-button bg-blue" type="submit" value="Vali" />
+                </form>
+            } else
+            {
+                <form action="" method="post">
+                    <div class="form-container">
+                        @{
+                            if (!Model.IsCompany && Model.IsPrivate)
+                            {
+                                <label class="form-container-detail" for="firstName">Eesnimi:</label>
+                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.GuestToShow.FirstName" />
+                                <label class="form-container-detail" for="lastName">Perenimi:</label>
+                                <input class="form-container-detail" type="text" id="lastName" name="lastName" value="@Model.GuestToShow.LastName" />
+                                <label class="form-container-detail" for="idNumber">Isikukood:</label>
+                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.GuestToShow.IdNumber" />
+                                <input type="text" name="clientType" value="false" hidden />
+                            }
+                            else
+                            {
+                                <label class="form-container-detail" for="firstName">Ettevõtte nimi:</label>
+                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.GuestToShow.FirstName" />
+                                <label class="form-container-detail" for="lastName">Osalejate arv:</label>
+                                <input class="form-container-detail" type="number" id="lastName" name="lastName" value="@Model.GuestToShow.LastName" />
+                                <label class="form-container-detail" for="idNumber">Registrikood:</label>
+                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.GuestToShow.IdNumber" />
+                                <input type="text" name="clientType" value="true" hidden />
+                            }
+                        }
+                        <label class="form-container-detail" for="payment">Maksmisviis:</label>
+                        <select class="form-container-detail" name="payment" id="payment">
+                            <option value="Sularaha">Sularaha</option>
+                            <option value="Pangaülekanne">Pangaülekanne</option>
+                        </select>
+                        <label class="form-container-detail" for="addInfo">Lisainfo:</label>
+                        <textarea class="form-container-detail" id="addInfo" name="addInfo" rows="3" cols="60" maxlength="5000"></textarea>
+                        <input type="number" name="eventId" value="@Model.EventToShow.EventId" hidden />
+                        <input type="number" name="guestId" value="@Model.GuestToShow.GuestId" hidden />
+                        <input type="text" name="change" value="@Model.Change" hidden />
+                    </div>
+                    <br />
+                    <br />
+                    <a href="../Index"><input type="button" class="form-button" value="Tagasi" /></a>
+                    <input class="form-button bg-blue" type="submit" value="Salvesta" />
+                </form>
+            }
+        }
+        
+    </div>
+
+    <div>
+        @foreach (string error in Model.Errors)
+        {
+            <p class="error">@error</p>
+        }
+    </div>
+</div>

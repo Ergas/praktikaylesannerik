@@ -39,6 +39,10 @@ namespace praktikaylrik.Pages
             {
                 errors.Add("Lisatav üritus peab toimuma tulevikus!");
             }
+            if (addInfo != null && addInfo.Length > 1000)
+            {
+                errors.Add("Lisainfo pikkus tohib olla maksimaalselt 1000 tähemärki. Praegu on pikkus " + addInfo.Length + " tähemärki.");
+            }
 
             if (errors.Count == 0)
             {

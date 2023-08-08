@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
 using System.Net.NetworkInformation;
+using System.Numerics;
 using System.Reflection.Metadata;
 using System.Web;
 
@@ -13,8 +14,7 @@ namespace praktikaylrik.Pages
         private readonly ILogger<IndexModel> _logger;
         public List<Event> eventsFuture = new List<Event>();
         public List<Event> eventsPast = new List<Event>();
-
-
+        public IDictionary<int, int> GuestCount { get; set; } = new Dictionary<int, int>();
 
         public IndexModel(ILogger<IndexModel> logger)
         {
@@ -27,13 +27,15 @@ namespace praktikaylrik.Pages
             Event eventObj;
             SqlConnection cnn;
             SqlCommand command;
-            String sql;
+            string sql;
+            string sqlForGuests;
             SqlDataReader dataReader;
 
             cnn = new SqlConnection(connectionString);
             cnn.Open();
 
             sql = "SELECT * FROM event";
+            sqlForGuests = "SELECT * FROM guest";
 
             command = new SqlCommand(sql, cnn);
             
@@ -63,6 +65,8 @@ namespace praktikaylrik.Pages
                 eventObj.Location = location;
                 eventObj.AddInfo = addInfo;
 
+                GuestCount.Add(eventObj.EventId, 0);
+
                 if (dateTime >  DateTime.Now)
                 {
                     eventsFuture.Add(eventObj);
@@ -70,11 +74,80 @@ namespace praktikaylrik.Pages
                 {
                     eventsPast.Add(eventObj);
                 }
+
+            }
+            dataReader.Close();
+            command.Dispose();
+            command = new SqlCommand(sqlForGuests, cnn);
+            dataReader = command.ExecuteReader();
+
+            while (dataReader.Read())
+            {
+                int eventId = (int)dataReader["event_id"];
+                int guestId = (int)dataReader["guest_id"];
+                bool isCompany = (bool)dataReader["is_company"];
+                int guestCount = 1;
+                if (isCompany)
+                {
+                    guestCount = int.Parse((string)dataReader["last_name"]);
+                }
+
+                if (GuestCount.ContainsKey(eventId))
+                {
+                    GuestCount[eventId] += guestCount;
+                }
+            }
+
+            command.Dispose();
+            cnn.Close();
+
+            eventsFuture.Sort((x, y) => x.EventDate.CompareTo(y.EventDate));
+            eventsPast.Sort((x, y) => y.EventDate.CompareTo(x.EventDate));
+        }
+
+        public void OnPost(int deleteId)
+        {
+            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
+            SqlConnection cnn;
+            SqlCommand command;
+
+            cnn = new SqlConnection(connectionString);
+            cnn.Open();
+
+            command = cnn.CreateCommand();
+
+            command.CommandText = "SELECT * FROM event WHERE event_id=@eventId";
+            command.Parameters.AddWithValue("@eventId", deleteId);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            DateTime dateTime;
+
+            if (reader.Read())
+            {
+                dateTime = (DateTime)reader["event_date"];
+                reader.Close();
+
+                if (DateTime.Compare(dateTime, DateTime.Now) > 0)
+                {
+                    command = cnn.CreateCommand();
+
+                    command.CommandText = "DELETE FROM [dbo].[event] WHERE event_id=@eventId";
+                    command.Parameters.AddWithValue("@eventId", deleteId);
+
+                    command.ExecuteNonQuery();
+                    command.Dispose();
+
+                    command = cnn.CreateCommand();
+                    command.CommandText = "DELETE FROM [dbo].[guest] WHERE event_id=@eventId";
+                    command.Parameters.AddWithValue("@eventId", deleteId);
+                    command.ExecuteNonQuery();
+                }
             }
 
             cnn.Close();
 
-            eventsFuture.Sort((x, y) => x.EventDate.CompareTo(y.EventDate));
+            Response.Redirect("../Index");
         }
     }
 }

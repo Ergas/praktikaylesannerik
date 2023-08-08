@@ -23,8 +23,27 @@ namespace praktikaylrik.Pages
             _logger = logger;
         }
 
-        public void OnGet(int id)
+        public void OnGet(int id, int guestId, string delete)
         {
+            if (!string.IsNullOrEmpty(delete))
+            {
+                string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
+                SqlConnection cnn;
+                SqlCommand command;
+                string sql;
+                SqlDataReader dataReader;
+
+                cnn = new SqlConnection(connectionString);
+                cnn.Open();
+
+                sql = "DELETE FROM [dbo].[guest] WHERE guest_id=" + guestId;
+
+                command = new SqlCommand(sql, cnn);
+
+                command.ExecuteNonQuery();
+
+                Response.Redirect("../Participants?id=" + id);
+            }
             GetEvent(id);
         }
 
@@ -86,7 +105,7 @@ namespace praktikaylrik.Pages
 
                 cnn.Close();
 
-                Response.Redirect("?id=" + eventId);
+                Response.Redirect("../Index");
             }
 
 
@@ -114,7 +133,16 @@ namespace praktikaylrik.Pages
                 string name = (string)dataReader["event_name"];
                 DateTime dateTime = (DateTime)dataReader["event_date"];
                 string location = (string)dataReader["location"];
-                string addInfo = (string)dataReader["add_info"];
+                string addInfo;
+
+                if (!dataReader["add_info"].Equals(System.DBNull.Value))
+                {
+                    addInfo = (string)dataReader["add_info"];
+                } else
+                {
+                    addInfo = "";
+                }
+                
 
                 EventToShow = new Event
                 {

@@ -24,11 +24,11 @@
             <label class="form-container-detail" for="location">Koht:</label>
                 <input class="form-container-detail" type="text" id="location" name="location" value="@Model.Location" />
             <label class="form-container-detail" for="add-info">Lisainfo:</label>
-                <textarea class="form-container-detail" id="add-info" name="add-info" rows="3" cols="60" value="@Model.AddInfo"></textarea>
+                <textarea class="form-container-detail" id="add-info" name="addInfo" rows="3" cols="60" value="@Model.AddInfo" maxlength="1000"></textarea>
             </div>
             <br />
             <br />
-            <input class="form-button" type="button" value="Tagasi"/>
+            <a href="../Index"><input type="button" class="form-button" value="Tagasi"/></a>
             <input class="form-button bg-blue" type="submit" value="Lisa"/>
 
             <div>
