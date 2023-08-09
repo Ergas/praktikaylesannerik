@@ -63,22 +63,22 @@ namespace praktikaylrik.Pages
             if (string.IsNullOrEmpty(name))
             {
                 errors.Add("Ürituse nime lahter ei tohi olla tühi!");
-                throw new ArgumentException("Name of the event must not be empty!");
+                //throw new ArgumentException("Name of the event must not be empty!");
             }
             if (string.IsNullOrEmpty(location))
             {
                 errors.Add("Ürituse asukoha lahter ei tohi olla tühi!");
-                throw new ArgumentException("Location of the event must not be empty!");
+                //throw new ArgumentException("Location of the event must not be empty!");
             }
             if (DateTime.Compare(DateTime.Now, date) > 0)
             {
                 errors.Add("Lisatav üritus peab toimuma tulevikus!");
-                throw new ArgumentException("Date of the event must be in the future!");
+                //throw new ArgumentException("Date of the event must be in the future!");
             }
             if (addInfo != null && addInfo.Length > 1000)
             {
                 errors.Add("Lisainfo pikkus tohib olla maksimaalselt 1000 tähemärki. Praegu on pikkus " + addInfo.Length + " tähemärki.");
-                throw new ArgumentException("Additional information can maximum be up to 1000 characters!");
+                //throw new ArgumentException("Additional information can maximum be up to 1000 characters!");
             }
         }
     }

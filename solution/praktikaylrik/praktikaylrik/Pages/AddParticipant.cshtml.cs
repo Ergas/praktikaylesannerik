@@ -61,6 +61,14 @@ namespace praktikaylrik.Pages
         public void OnPost(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId, int isChanging)
         {
             GetEvent(eventId);
+            GetPaymentTypes();
+            ClientType = clientTypeId;
+            Client.FirstName = firstName;
+            Client.LastName = lastName; 
+            Client.IdNumber = idNumber;
+            Client.AddInfo = addInfo;
+            Client.ClientTypeId = clientTypeId;
+            Client.PaymentTypeId = paymentTypeId;
             // Check if all the fields are filled as required
             CheckForErrors(eventId, guestId, firstName, lastName, idNumber, paymentTypeId, addInfo, clientTypeId, isChanging);
 
@@ -286,22 +294,30 @@ namespace praktikaylrik.Pages
                 if (firstName != null && firstName.Length < 2)
                 {
                     Errors.Add("Kontrolli eesnime, pikkus peaks olema vähemalt 2 märki.");
-                    throw new ArgumentException("Eesnimi nimi on liiga lühike!");
+                    //throw new ArgumentException("Eesnimi nimi on liiga lühike!");
                 }
                 if (lastName != null && lastName.Length < 2)
                 {
                     Errors.Add("Kontrolli perenime, pikkus peaks olema vähemalt 2 märki.");
-                    throw new ArgumentException("Perekonnanimi nimi on liiga lühike!");
+                    //throw new ArgumentException("Perekonnanimi nimi on liiga lühike!");
                 }
                 if (idNumber != null && !idNumber.Length.Equals(11))
                 {
                     Errors.Add("Kontrolli isikukoodi, pikkus peaks olema 11 numbrit.");
-                    throw new ArgumentException("Isikukood ei ole korrektne!");
+                    //throw new ArgumentException("Isikukood ei ole korrektne!");
+                } else if (idNumber != null && idNumber.Length.Equals(11))
+                {
+                    if (!validateIDCode(idNumber))
+                    {
+                        Errors.Add("Isikukood on vigane, kontrolli isikukoodi!");
+                        //throw new ArgumentException("Isikukood ei ole korrektne!");
+
+                    }
                 }
                 if (addInfo != null && addInfo.Length > 1500)
                 {
                     Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 1500 märki! Praegu on sisestatud " + addInfo.Length + " märki.");
-                    throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 1500 märki!");
+                    //throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 1500 märki!");
                 }
             }
             else
@@ -310,7 +326,7 @@ namespace praktikaylrik.Pages
                 if (firstName != null && firstName.Length < 2)
                 {
                     Errors.Add("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
-                    throw new ArgumentException("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
+                    //throw new ArgumentException("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
                 }
 
                 lastName ??= "0";
@@ -318,13 +334,106 @@ namespace praktikaylrik.Pages
                 if (idNumber != null && !idNumber.Length.Equals(8))
                 {
                     Errors.Add("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
-                    throw new ArgumentException("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
+                    //throw new ArgumentException("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
                 }
                 if (addInfo != null && addInfo.Length > 5000)
                 {
                     Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 5000 märki! Praegu on sisestatud " + addInfo.Length + " märki.");
-                    throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 5000 märki!");
+                    //throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 5000 märki!");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Validate id code.
+        /// </summary>
+        /// <param name="idCode">id code to validate</param>
+        /// <returns>Whether the id code is correct or not.</returns>
+        private bool validateIDCode(string idCode)
+        {
+            try
+            {
+                // check length
+                if (idCode.Length != 11) return false;
+
+                int century = 0;
+
+                // check century
+                switch (idCode[0])
+                {
+                    case '1':
+                    case '2':
+                        {
+                            century = 1800;
+                            break;
+                        }
+                    case '3':
+                    case '4':
+                        {
+                            century = 1900;
+                            break;
+                        }
+                    case '5':
+                    case '6':
+                        {
+                            century = 2000;
+                            break;
+                        }
+                    default:
+                        {
+                            return false;
+                        }
+                }
+
+
+                // check if birthday is a valid date
+                // get a date from IK
+                string s = idCode.Substring(5, 2) + "." +
+                    idCode.Substring(3, 2) + "." +
+                    Convert.ToString(century + Convert.ToInt32(idCode.Substring(1, 2)));
+
+                //error if parse fails, catch gets false. TryParse() does not exist in .NET 1.1
+                DateTime d = DateTime.Parse(s);
+
+                // calculate the checksum
+                int n = Int16.Parse(idCode[0].ToString()) * 1
+                      + Int16.Parse(idCode[1].ToString()) * 2
+                      + Int16.Parse(idCode[2].ToString()) * 3
+                      + Int16.Parse(idCode[3].ToString()) * 4
+                      + Int16.Parse(idCode[4].ToString()) * 5
+                      + Int16.Parse(idCode[5].ToString()) * 6
+                      + Int16.Parse(idCode[6].ToString()) * 7
+                      + Int16.Parse(idCode[7].ToString()) * 8
+                      + Int16.Parse(idCode[8].ToString()) * 9
+                      + Int16.Parse(idCode[9].ToString()) * 1;
+
+                int c = n % 11;
+
+                // special case recalculate the checksum
+                if (c == 10)
+                {
+                    // calculate the checksum
+                    n = Int16.Parse(idCode[0].ToString()) * 3
+                      + Int16.Parse(idCode[1].ToString()) * 4
+                      + Int16.Parse(idCode[2].ToString()) * 5
+                      + Int16.Parse(idCode[3].ToString()) * 6
+                      + Int16.Parse(idCode[4].ToString()) * 7
+                      + Int16.Parse(idCode[5].ToString()) * 8
+                      + Int16.Parse(idCode[6].ToString()) * 9
+                      + Int16.Parse(idCode[7].ToString()) * 1
+                      + Int16.Parse(idCode[8].ToString()) * 2
+                      + Int16.Parse(idCode[9].ToString()) * 3;
+
+                    c = n % 11;
+                    c = c % 10;
+                }
+
+                return (c == Int16.Parse(idCode[10].ToString()));
+            }
+
+            catch
+            {
+                return false;
             }
         }
     }
