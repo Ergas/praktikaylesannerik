@@ -12,6 +12,11 @@ namespace praktikaylrik.Pages
         public string? Location { get; set; }
         public string? AddInfo { get; set; }
 
+        public void OnGet()
+        {
+
+        }
+
         /// <summary>
         /// Function which creates a new event and saves it to the database.
         /// </summary>
@@ -21,7 +26,6 @@ namespace praktikaylrik.Pages
         /// <param name="addInfo">Additional information about the event.</param>
         public void OnPost(string name, DateTime date, string location, string addInfo)
         {
-            date = new DateTime(2023, 12, 05, 15, 00, 00);
             CheckForErrors(name, date, location, addInfo);
 
             if (errors.Count == 0)
@@ -30,7 +34,7 @@ namespace praktikaylrik.Pages
                 SqlCommand command;
                 string sql;
 
-                sql = "INSERT INTO[dbo].[event] ([event_name], [event_date], [location], [add_info]) VALUES( N'" + name + "', N'" + date.ToString("yyyy-MM-dd HH:mm:ss") + "', N'" + location + "', N'" + addInfo + "')";
+                sql = "INSERT INTO[dbo].[event] ([event_name], [event_date], [location], [add_info]) VALUES( N'" + name + "', N'" + date.ToString("yyyy-MM-dd HH:mm:ss") + "', N'" + location + "', N'" + addInfo + "');";
 
                 cnn = new SqlConnection(DatabaseConnection.ConnectionString);
 
@@ -38,11 +42,22 @@ namespace praktikaylrik.Pages
 
                 command = new SqlCommand(sql, cnn);
 
-                command.ExecuteReader();
+                command.ExecuteScalar();
 
+                command.Dispose();
                 cnn.Close();
 
-                Response.Redirect("../Index");
+
+                // Adding try-catch for tests since tests don't like redirecting
+                // and I couldn't find a way for tests to ignore redirecting.
+                try
+                {
+                    Response.Redirect("../Index");
+                } catch (NullReferenceException)
+                {
+                }
+
+                
             }
 
             Name = name;
@@ -63,22 +78,22 @@ namespace praktikaylrik.Pages
             if (string.IsNullOrEmpty(name))
             {
                 errors.Add("Ürituse nime lahter ei tohi olla tühi!");
-                //throw new ArgumentException("Name of the event must not be empty!");
+                throw new ArgumentException("Name of the event must not be empty!");
             }
             if (string.IsNullOrEmpty(location))
             {
                 errors.Add("Ürituse asukoha lahter ei tohi olla tühi!");
-                //throw new ArgumentException("Location of the event must not be empty!");
+                throw new ArgumentException("Location of the event must not be empty!");
             }
             if (DateTime.Compare(DateTime.Now, date) > 0)
             {
                 errors.Add("Lisatav üritus peab toimuma tulevikus!");
-                //throw new ArgumentException("Date of the event must be in the future!");
+                throw new ArgumentException("Date of the event must be in the future!");
             }
             if (addInfo != null && addInfo.Length > 1000)
             {
                 errors.Add("Lisainfo pikkus tohib olla maksimaalselt 1000 tähemärki. Praegu on pikkus " + addInfo.Length + " tähemärki.");
-                //throw new ArgumentException("Additional information can maximum be up to 1000 characters!");
+                throw new ArgumentException("Additional information can maximum be up to 1000 characters!");
             }
         }
     }

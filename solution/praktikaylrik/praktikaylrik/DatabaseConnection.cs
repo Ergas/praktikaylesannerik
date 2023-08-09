@@ -10,15 +10,8 @@ namespace praktikaylrik
 
         private static string GetPath()
         {
-            List<string> findPath = Environment.CurrentDirectory.Split("\\").ToList();
-            findPath.RemoveRange(findPath.Count - 3, 3);
-            string result = "";
-            foreach (string s in findPath)
-            {
-                result += s + "\\";
-            }
-            result += "database\\registration_system.mdf";
-            return result;
+            List<string> findPath = Environment.CurrentDirectory.Split("praktikaylesannerik\\").ToList();
+            return findPath[0] + "praktikaylesannerik\\database\\registration_system.mdf";
         }
     }
 }
