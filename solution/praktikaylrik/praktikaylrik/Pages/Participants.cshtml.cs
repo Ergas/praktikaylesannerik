@@ -14,8 +14,6 @@ namespace praktikaylrik.Pages
 
         public Event? EventToShow { get; set; }
 
-        public List<string> Errors { get; set; } = new List<string>();
-
         /// <summary>
         /// Method to fetch information about an event from the database or to delete guests from an event.
         /// </summary>

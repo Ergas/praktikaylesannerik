@@ -62,47 +62,9 @@ namespace praktikaylrik.Pages
         {
             GetEvent(eventId);
             // Check if all the fields are filled as required
-            if (clientTypeId == 1)
-            {
-                // first check for private person
-                if (firstName != null && firstName.Length < 2)
-                {
-                    Errors.Add("Kontrolli eesnime, pikkus peaks olema vähemalt 2 märki.");
-                }
-                if (lastName != null && lastName.Length < 2)
-                {
-                    Errors.Add("Kontrolli perenime, pikkus peaks olema vähemalt 2 märki.");
-                }
-                if (idNumber != null && !idNumber.Length.Equals(11))
-                {
-                    Errors.Add("Kontrolli isikukoodi, pikkus peaks olema 11 numbrit.");
-                }
-                if (addInfo != null && addInfo.Length > 1500)
-                {
-                    Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 1500 märki! Praegu on sisestatud " +  addInfo.Length + " märki.");
-                }
-            }
-            else
-            {
-                // then check for business
-                if (firstName != null && firstName.Length < 2)
-                {
-                    Errors.Add("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
-                }
+            CheckForErrors(eventId, guestId, firstName, lastName, idNumber, paymentTypeId, addInfo, clientTypeId, isChanging);
 
-                lastName ??= "0";
-
-                if (idNumber != null && !idNumber.Length.Equals(8))
-                {
-                    Errors.Add("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
-                }
-                if (addInfo != null && addInfo.Length > 5000)
-                {
-                    Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 5000 märki! Praegu on sisestatud " + addInfo.Length + " märki.");
-                }
-            }
-
-            if (Errors.Count.Equals(0))
+            if (Errors.Count == 0)
             {
                 // Create client as object
                 CreateGuest(eventId, guestId, firstName!, lastName!, clientTypeId, idNumber!, paymentTypeId, addInfo!, isChanging);
@@ -302,6 +264,68 @@ namespace praktikaylrik.Pages
             dataReader.Close();
             command.Dispose();
             cnn.Close();
+        }
+
+        /// <summary>
+        /// Method to find faults in inputs.
+        /// </summary>
+        /// <param name="eventId">Id of the event to which user wants to add participants or change guest's info.</param>
+        /// <param name="guestId">Id of the participant whose info is being edited.</param>
+        /// <param name="firstName">First name of a private person or name of the company.</param>
+        /// <param name="lastName">Last name of a private person or amount of guests from a company.</param>
+        /// <param name="idNumber">Personal identification code for private person, registry number for company.</param>
+        /// <param name="paymentTypeId">Payment type, whether it would be cash or bank transaction etc.</param>
+        /// <param name="addInfo">Additional information about the guest in this event.</param>
+        /// <param name="clientTypeId">Type of guest (whether private person or company).</param>
+        /// <param name="isChanging">Number 0 means creating new participant for the event, 1 means editing someone's info.</param>
+        private void CheckForErrors(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId, int isChanging)
+        {
+            if (clientTypeId == 1)
+            {
+                // first check for private person
+                if (firstName != null && firstName.Length < 2)
+                {
+                    Errors.Add("Kontrolli eesnime, pikkus peaks olema vähemalt 2 märki.");
+                    throw new ArgumentException("Eesnimi nimi on liiga lühike!");
+                }
+                if (lastName != null && lastName.Length < 2)
+                {
+                    Errors.Add("Kontrolli perenime, pikkus peaks olema vähemalt 2 märki.");
+                    throw new ArgumentException("Perekonnanimi nimi on liiga lühike!");
+                }
+                if (idNumber != null && !idNumber.Length.Equals(11))
+                {
+                    Errors.Add("Kontrolli isikukoodi, pikkus peaks olema 11 numbrit.");
+                    throw new ArgumentException("Isikukood ei ole korrektne!");
+                }
+                if (addInfo != null && addInfo.Length > 1500)
+                {
+                    Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 1500 märki! Praegu on sisestatud " + addInfo.Length + " märki.");
+                    throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 1500 märki!");
+                }
+            }
+            else
+            {
+                // then check for business
+                if (firstName != null && firstName.Length < 2)
+                {
+                    Errors.Add("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
+                    throw new ArgumentException("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
+                }
+
+                lastName ??= "0";
+
+                if (idNumber != null && !idNumber.Length.Equals(8))
+                {
+                    Errors.Add("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
+                    throw new ArgumentException("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
+                }
+                if (addInfo != null && addInfo.Length > 5000)
+                {
+                    Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 5000 märki! Praegu on sisestatud " + addInfo.Length + " märki.");
+                    throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 5000 märki!");
+                }
+            }
         }
     }
 }

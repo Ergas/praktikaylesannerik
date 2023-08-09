@@ -3,7 +3,6 @@
     public static class DatabaseConnection
     {
         public static string ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + GetPath() + "database\\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
-        
 
         private static string GetPath()
         {
