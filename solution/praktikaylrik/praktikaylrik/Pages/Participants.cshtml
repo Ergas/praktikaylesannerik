@@ -46,9 +46,16 @@
 
                         <div>@guest.IdNumber</div>
                         <div><a href="AddParticipant?eventId=@Model.EventToShow.EventId&clientType=@guest.ClientTypeId&changeDetails=1&guestId=@guest.GuestId">Vaata</a></div>
-                        
-                            
+
+
+                        if (DateTime.Compare(Model.EventToShow.EventDate, DateTime.Now) > 0) {
                             <div><a href="Participants?id=@Model.EventToShow.EventId&guestId=@guest.GuestId&delete=y">Kustuta</a></div>
+                        } else
+                        {
+                            <div></div>
+                        }
+
+                    
                             { count++; }
                         }
 

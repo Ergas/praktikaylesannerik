@@ -60,26 +60,81 @@
                 </form>
             } else
             {
-                <form action="" method="post">
+                if (DateTime.Compare(Model.EventToShow.EventDate, DateTime.Now) > 0)
+                {
+                    <form action="" method="post">
+                        <div class="form-container">
+                            @{
+                                if (Model.ClientType == 1)
+                                {
+                                    <label class="form-container-detail" for="firstName">Eesnimi:</label>
+                                    <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" />
+                                    <label class="form-container-detail" for="lastName">Perenimi:</label>
+                                    <input class="form-container-detail" type="text" id="lastName" name="lastName" value="@Model.Client.LastName" />
+                                    <label class="form-container-detail" for="idNumber">Isikukood:</label>
+                                    <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" />
+                                }
+                                else if (Model.ClientType == 2)
+                                {
+                                    <label class="form-container-detail" for="firstName">Ettevõtte nimi:</label>
+                                    <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" />
+                                    <label class="form-container-detail" for="lastName">Osalejate arv:</label>
+                                    <input class="form-container-detail" type="number" id="lastName" name="lastName" value="@Model.Client.LastName" />
+                                    <label class="form-container-detail" for="idNumber">Registrikood:</label>
+                                    <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" />
+                                }
+                            }
+                            <label class="form-container-detail" for="paymentTypeId">Maksmisviis:</label>
+                            <select class="form-container-detail" name="paymentTypeId" id="paymentTypeId">
+                                @{
+                                    foreach (PaymentType type in Model.PaymentTypes)
+                                    {
+
+                                        if (type.PaymentTypeId == Model.Client.PaymentTypeId)
+                                        {
+                                            <option value="@type.PaymentTypeId" selected="selected">@type.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@type.PaymentTypeId">@type.Name</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                            <label class="form-container-detail" for="addInfo">Lisainfo:</label>
+                            <textarea class="form-container-detail" id="addInfo" name="addInfo" rows="3" cols="60" maxlength="5000">@Model.Client.AddInfo</textarea>
+                            <input type="number" name="eventId" value="@Model.EventToShow.EventId" hidden />
+                            <input type="number" name="guestId" value="@Model.Client.GuestId" hidden />
+                            <input type="number" name="clientTypeId" value="@Model.ClientType" hidden />
+                            <input type="number" name="isChanging" value="@Model.ChangeDetails" hidden />
+
+                        </div>
+                        <br />
+                        <br />
+                        <a href="../Index"><input type="button" class="form-button" value="Tagasi" /></a>
+                        <input class="form-button bg-blue" type="submit" value="Salvesta" />
+                    </form>
+                } else
+                {
                     <div class="form-container">
                         @{
                             if (Model.ClientType == 1)
                             {
                                 <label class="form-container-detail" for="firstName">Eesnimi:</label>
-                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" />
+                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" disabled/>
                                 <label class="form-container-detail" for="lastName">Perenimi:</label>
-                                <input class="form-container-detail" type="text" id="lastName" name="lastName" value="@Model.Client.LastName" />
+                                <input class="form-container-detail" type="text" id="lastName" name="lastName" value="@Model.Client.LastName" disabled />
                                 <label class="form-container-detail" for="idNumber">Isikukood:</label>
-                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" />
+                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" disabled />
                             }
                             else if (Model.ClientType == 2)
                             {
                                 <label class="form-container-detail" for="firstName">Ettevõtte nimi:</label>
-                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" />
+                                <input class="form-container-detail" type="text" id="firstName" name="firstName" value="@Model.Client.FirstName" disabled />
                                 <label class="form-container-detail" for="lastName">Osalejate arv:</label>
-                                <input class="form-container-detail" type="number" id="lastName" name="lastName" value="@Model.Client.LastName" />
+                                <input class="form-container-detail" type="number" id="lastName" name="lastName" value="@Model.Client.LastName" disabled />
                                 <label class="form-container-detail" for="idNumber">Registrikood:</label>
-                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" />
+                                <input class="form-container-detail" type="text" id="idNumber" name="idNumber" value="@Model.Client.IdNumber" disabled />
                             }
                         }
                         <label class="form-container-detail" for="paymentTypeId">Maksmisviis:</label>
@@ -87,19 +142,16 @@
                             @{
                                 foreach (PaymentType type in Model.PaymentTypes)
                                 {
-                                    
+
                                     if (type.PaymentTypeId == Model.Client.PaymentTypeId)
                                     {
                                         <option value="@type.PaymentTypeId" selected="selected">@type.Name</option>
-                                    } else
-                                    {
-                                        <option value="@type.PaymentTypeId">@type.Name</option>
                                     }
                                 }
                             }
                         </select>
                         <label class="form-container-detail" for="addInfo">Lisainfo:</label>
-                        <textarea class="form-container-detail" id="addInfo" name="addInfo" rows="3" cols="60" maxlength="5000">@Model.Client.AddInfo</textarea>
+                        <textarea class="form-container-detail" id="addInfo" name="addInfo" rows="3" cols="60" maxlength="5000" disabled>@Model.Client.AddInfo</textarea>
                         <input type="number" name="eventId" value="@Model.EventToShow.EventId" hidden />
                         <input type="number" name="guestId" value="@Model.Client.GuestId" hidden />
                         <input type="number" name="clientTypeId" value="@Model.ClientType" hidden />
@@ -109,8 +161,8 @@
                     <br />
                     <br />
                     <a href="../Index"><input type="button" class="form-button" value="Tagasi" /></a>
-                    <input class="form-button bg-blue" type="submit" value="Salvesta" />
-                </form>
+                }
+
             }
         }
         
