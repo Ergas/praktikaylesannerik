@@ -60,7 +60,7 @@
             }
             @foreach (Event e in Model.eventsPast)
             {
-                <div class="element-event-list">@count. <a href="/Participants?id=@e.EventId">@e.Name</a></div>
+                <div class="element-event-list">@countPast. <a href="/Participants?id=@e.EventId">@e.Name</a></div>
                 <div class="element-event-list">@e.EventDate.ToString("dd.MM.yyyy")</div>
                 <div class="element-event-list">@e.Location</div>
                 <div class="element-event-list">@Model.GuestCount[e.EventId]</div>

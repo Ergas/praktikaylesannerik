@@ -1,8 +1,12 @@
-﻿namespace praktikaylrik
+﻿using System;
+using System.Data.SqlClient;
+using System.Net;
+
+namespace praktikaylrik
 {
     public static class DatabaseConnection
     {
-        public static string ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ergas\Documents\GitHub\praktikaylesannerik\database\registration_system.mdf;Integrated Security=True;Connect Timeout=30";
+        public static string ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + GetPath() + ";Integrated Security=True;Connect Timeout=30";
 
         private static string GetPath()
         {
@@ -13,6 +17,7 @@
             {
                 result += s + "\\";
             }
+            result += "database\\registration_system.mdf";
             return result;
         }
     }

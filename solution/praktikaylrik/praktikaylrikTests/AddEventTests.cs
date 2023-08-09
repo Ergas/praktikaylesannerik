@@ -27,9 +27,7 @@ namespace praktikaylrik.PagesTests
         [ExpectedException(typeof(ArgumentException))]
         public async Task OnPostWithMissingNameTestAsync()
         {
-            AddEvent addEvent = new AddEvent();
             DateTime time = new(2023, 08, 12, 15, 00, 00);
-            //addEvent.OnPost("", time, "Tallinn", "Info");
 
 
             using StringContent jsonContent = new(
@@ -58,30 +56,87 @@ namespace praktikaylrik.PagesTests
 
         [TestMethod()]
         [ExpectedException(typeof(ArgumentException))]
-        public void OnPostWithWrongDateTest()
+        public async Task OnPostWithWrongDateTestAsync()
         {
-            AddEvent addEvent = new AddEvent();
             DateTime time = new(2023, 02, 12, 15, 00, 00);
-            addEvent.OnPost("Name", time, "Tallinn", "Info");
+
+            using StringContent jsonContent = new(
+                JsonSerializer.Serialize(new
+                {
+                    name = "Name",
+                    date = time,
+                    location = "Test Location",
+                    addInfo = "Add info exists"
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsync("/AddEvent", jsonContent);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException e)
+            {
+                throw new ArgumentException(e.Message);
+            }
         }
 
         [TestMethod()]
         [ExpectedException(typeof(ArgumentException))]
-        public void OnPostWithMissingLocationTest()
+        public async Task OnPostWithMissingLocationTestAsync()
         {
-            AddEvent addEvent = new AddEvent();
-            DateTime time = new(2023, 08, 12, 15, 00, 00);
-            addEvent.OnPost("Name", time, "", "Info");
+            DateTime time = new(2023, 09, 12, 15, 00, 00);
+
+            using StringContent jsonContent = new(
+                JsonSerializer.Serialize(new
+                {
+                    name = "Name",
+                    date = time,
+                    location = "",
+                    addInfo = "Add info exists"
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsync("/AddEvent", jsonContent);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException e)
+            {
+                throw new ArgumentException(e.Message);
+            }
         }
 
         [TestMethod()]
         [ExpectedException(typeof(ArgumentException))]
-        public void OnPostWithTooLongAdditionalInfoTest()
+        public async Task OnPostWithTooLongAdditionalInfoTestAsync()
         {
-            AddEvent addEvent = new AddEvent();
-            DateTime time = new(2023, 08, 12, 15, 00, 00);
             string info = String.Concat(Enumerable.Repeat("T", 1001));
-            addEvent.OnPost("", time, "Tallinn", "Info");
+            DateTime time = new(2023, 0, 12, 15, 00, 00);
+
+            using StringContent jsonContent = new(
+                JsonSerializer.Serialize(new
+                {
+                    name = "Name",
+                    date = time,
+                    location = "Test Location",
+                    addInfo = "Add info exists"
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsync("/AddEvent", jsonContent);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException e)
+            {
+                throw new ArgumentException(e.Message);
+            }
         }
 
         [TestMethod()]
@@ -98,7 +153,10 @@ namespace praktikaylrik.PagesTests
                 }),
                 Encoding.UTF8,
                 "application/json");
-            _httpClient.PostAsync("/AddEvent", jsonContent);
+            HttpResponseMessage response = _httpClient.PostAsync("/AddEvent", jsonContent).Result;
+
+            string result = response.Content.ReadAsStringAsync().Result;
+            throw new Exception(result);
         }
     }
 }

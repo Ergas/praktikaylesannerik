@@ -136,10 +136,12 @@ body {
 }
 
 .container-event {
+    align-content: start;
     margin-top: 2rem;
     margin-bottom: 3rem;
     display: grid;
     grid-template-columns: auto auto; 
+    height: fit-content;
 }
 
 .delete-from-list {

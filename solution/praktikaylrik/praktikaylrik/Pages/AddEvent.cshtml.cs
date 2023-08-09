@@ -21,7 +21,7 @@ namespace praktikaylrik.Pages
         /// <param name="addInfo">Additional information about the event.</param>
         public void OnPost(string name, DateTime date, string location, string addInfo)
         {
-
+            date = new DateTime(2023, 12, 05, 15, 00, 00);
             CheckForErrors(name, date, location, addInfo);
 
             if (errors.Count == 0)
