@@ -3,7 +3,6 @@
 
 Koodi dokumentatsioon on koodi sisse kirjutatud.
 
-09.08.2023 kell 15:15
 
 Kuna mul ei ole endal ligipääsu võrgus olevatele andmebaasidele, lõin andmebaasifaili, mille leiab kaustast [database](https://github.com/Ergas/praktikaylesannerik/tree/main/database/) zip.failina,
 zip-fail sisu tuleks lahti pakkida samasse [database](https://github.com/Ergas/praktikaylesannerik/tree/main/database/) kausta.
