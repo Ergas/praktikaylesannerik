@@ -16,10 +16,8 @@ C# ja HTML koodi kirjutamine üldiselt probleeme ei tekitanud, kuid lõpu poole 
 
 Funktsionaalsuse loomiseks ja toimima saamiseks kulus kuni 10h.
 
-
-Testimise osa on osutunud aga kõige keerulisemaks ning teste pole praegu korrektselt tööle saanudki.
-
+Testide tööle saamisele kulus 3-5h.
 
 
 *Ilmselt osaliselt on tekkinud raskusi ka seetõttu, et C# tegelesin viimati 2022. kevadel (ülikoolis) ning aasta ja mõne kuuga on juba üksjagu meelest ära läinud.
-Samuti on Visual Studio pisut harjumatu keskkond, siiani olen kasutanud JetBrainsi tarkvara.*
+Samuti on Visual Studio veel pisut harjumatu keskkond, siiani olen kasutanud JetBrainsi tarkvara.*
