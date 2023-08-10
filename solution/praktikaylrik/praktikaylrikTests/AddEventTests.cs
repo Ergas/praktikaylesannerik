@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using praktikaylrik.Pages;
+using praktikaylrikTests;
 
 namespace praktikaylrik.PagesTests
 {
@@ -11,45 +11,35 @@ namespace praktikaylrik.PagesTests
         [ExpectedException(typeof(ArgumentException))]
         public void OnPostWithMissingNameTest()
         {
-            AddEvent addEvent = new();
-
-            addEvent.OnPost("", new DateTime(2023, 09, 12, 15, 00, 00), "Location", "Add info");
+            TestHelper.AddEventToDatabase("", new DateTime(2023, 09, 12, 15, 00, 00), "Location", "Add info");
         }
 
 
         [TestMethod()]
         [ExpectedException(typeof(ArgumentException))]
-        public void OnPostWithWrongDateTestAsync()
+        public void OnPostWithWrongDateTest()
         {
-            AddEvent addEvent = new();
-
-            addEvent.OnPost("Testttt", new DateTime(2023, 01, 12, 15, 00, 00), "Location", "Add info");
+            TestHelper.AddEventToDatabase("Testttt", new DateTime(2023, 01, 12, 15, 00, 00), "Location", "Add info");
         }
 
         [TestMethod()]
         [ExpectedException(typeof(ArgumentException))]
-        public void OnPostWithMissingLocationTestAsync()
+        public void OnPostWithMissingLocationTest()
         {
-            AddEvent addEvent = new();
-
-            addEvent.OnPost("Testttt", new DateTime(2023, 09, 12, 15, 00, 00), "", "Add info");
+            TestHelper.AddEventToDatabase("Testttt", new DateTime(2023, 09, 12, 15, 00, 00), "", "Add info");
         }
 
         [TestMethod()]
         [ExpectedException(typeof(ArgumentException))]
-        public void OnPostWithTooLongAdditionalInfoTestAsync()
+        public void OnPostWithTooLongAdditionalInfoTest()
         {
-            AddEvent addEvent = new();
-
-            addEvent.OnPost("Testttt", new DateTime(2023, 09, 12, 15, 00, 00), "Location", String.Concat(Enumerable.Repeat("T", 1001)));
+            TestHelper.AddEventToDatabase("Testttt", new DateTime(2023, 09, 12, 15, 00, 00), "Location", String.Concat(Enumerable.Repeat("T", 1001)));
         }
 
         [TestMethod()]
-        public void OnPostSuccessTestAsync()
+        public void OnPostSuccessTest()
         {
-            AddEvent addEvent = new();
-
-            addEvent.OnPost("Testttt", new DateTime(2023, 09, 12, 15, 00, 00), "Location", "Add Info");
+            TestHelper.AddEventToDatabase("SuccessEvent", new DateTime(2023, 09, 12, 15, 00, 00), "Location", "Add info");
         }
     }
 }

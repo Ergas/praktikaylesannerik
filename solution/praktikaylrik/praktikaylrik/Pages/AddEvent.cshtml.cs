@@ -24,28 +24,44 @@ namespace praktikaylrik.Pages
         /// <param name="date">Date of when the event should happen.</param>
         /// <param name="location">Location where the event would be held.</param>
         /// <param name="addInfo">Additional information about the event.</param>
-        public void OnPost(string name, DateTime date, string location, string addInfo)
+        public int OnPost(string name, DateTime date, string location, string addInfo)
         {
+            addInfo ??= "";
             CheckForErrors(name, date, location, addInfo);
+            int eventId = -1;
 
             if (errors.Count == 0)
             {
                 SqlConnection cnn;
                 SqlCommand command;
-                string sql;
-
-                sql = "INSERT INTO[dbo].[event] ([event_name], [event_date], [location], [add_info]) VALUES( N'" + name + "', N'" + date.ToString("yyyy-MM-dd HH:mm:ss") + "', N'" + location + "', N'" + addInfo + "');";
 
                 cnn = new SqlConnection(DatabaseConnection.ConnectionString);
-
                 cnn.Open();
 
-                command = new SqlCommand(sql, cnn);
+                command = cnn.CreateCommand();
 
-                command.ExecuteScalar();
 
-                command.Dispose();
-                cnn.Close();
+                command.CommandText = "INSERT INTO[dbo].[event] ([event_name], [event_date], [location], [add_info]) VALUES( @name, @date, @location, @addInfo);SELECT SCOPE_IDENTITY();";
+
+                command.Parameters.AddWithValue("@name", name);
+                command.Parameters.AddWithValue("@date", date.ToString("yyyy-MM-dd HH:mm:ss"));
+                command.Parameters.AddWithValue("@location", location);
+                command.Parameters.AddWithValue("@addInfo", addInfo);
+
+                try
+                {
+                    eventId = int.Parse(command.ExecuteScalar().ToString()!);
+
+                    command.Dispose();
+                    cnn.Close();
+                } catch
+                {
+                    command.Dispose();
+                    cnn.Close();
+
+                    throw new ArgumentException("Andmebaasi sisestamine ebaõnnestus!");
+                }
+                
 
 
                 // Adding try-catch for tests since tests don't like redirecting
@@ -64,6 +80,8 @@ namespace praktikaylrik.Pages
             Date = date;
             Location = location;
             AddInfo = addInfo;
+
+            return eventId;
         }
 
         /// <summary>

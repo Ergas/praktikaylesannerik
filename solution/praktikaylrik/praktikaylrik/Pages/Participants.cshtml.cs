@@ -1,10 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Numerics;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace praktikaylrik.Pages
 {
@@ -31,13 +27,21 @@ namespace praktikaylrik.Pages
                 cnn = new SqlConnection(DatabaseConnection.ConnectionString);
                 cnn.Open();
 
-                sql = "DELETE FROM [dbo].[guest] WHERE guest_id=" + guestId;
-
-                command = new SqlCommand(sql, cnn);
+                command = cnn.CreateCommand();
+                command.CommandText = "DELETE FROM [dbo].[guest] WHERE guest_id=@guestId;";
+                command.Parameters.AddWithValue("@guestId", guestId);
 
                 command.ExecuteNonQuery();
 
-                Response.Redirect("../Participants?id=" + id);
+                // Adding try-catch for tests since tests don't like redirecting
+                // and I couldn't find a way for tests to ignore redirecting.
+                try
+                {
+                    Response.Redirect("../Participants?id=" + id);
+                }
+                catch (NullReferenceException)
+                {
+                }
             }
             GetEvent(id);
         }
@@ -55,10 +59,9 @@ namespace praktikaylrik.Pages
 
             cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
-
-            sql = "SELECT * FROM event WHERE event_id = " + eventId;
-
-            command = new SqlCommand(sql, cnn);
+            command = cnn.CreateCommand();
+            command.CommandText = "SELECT * FROM event WHERE event_id=@eventId;";
+            command.Parameters.AddWithValue("@eventId", eventId);
 
             dataReader = command.ExecuteReader();
 
@@ -88,9 +91,10 @@ namespace praktikaylrik.Pages
                 };
             }
 
-            sql = "SELECT * FROM guest WHERE event_id = " + eventId;
-
-            command = new SqlCommand(sql, cnn);
+            command.Dispose();
+            command = cnn.CreateCommand();
+            command.CommandText = "SELECT * FROM guest WHERE event_id=@eventId;";
+            command.Parameters.AddWithValue("@eventId", eventId);
 
             dataReader.Close();
 

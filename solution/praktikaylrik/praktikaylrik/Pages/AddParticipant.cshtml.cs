@@ -25,7 +25,7 @@ namespace praktikaylrik.Pages
         public int ClientType = 0;
 
         /// <summary>
-        /// 
+        /// Get event details to which user wants to add participants.
         /// </summary>
         /// <param name="eventId">Id of the event to which user wants to add participants or change guest's info.</param>
         /// <param name="guestId">Id of the participant whose info is being edited.</param>
@@ -58,11 +58,12 @@ namespace praktikaylrik.Pages
         /// <param name="addInfo">Additional information about the guest in this event.</param>
         /// <param name="clientTypeId">Type of guest (whether private person or company).</param>
         /// <param name="isChanging">Number 0 means creating new participant for the event, 1 means editing someone's info.</param>
-        public void OnPost(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId, int isChanging)
+        public int OnPost(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId, int isChanging)
         {
             GetEvent(eventId);
             GetPaymentTypes();
             ClientType = clientTypeId;
+            Client.GuestId = -1;
             Client.FirstName = firstName;
             Client.LastName = lastName; 
             Client.IdNumber = idNumber;
@@ -70,15 +71,25 @@ namespace praktikaylrik.Pages
             Client.ClientTypeId = clientTypeId;
             Client.PaymentTypeId = paymentTypeId;
             // Check if all the fields are filled as required
-            CheckForErrors(eventId, guestId, firstName, lastName, idNumber, paymentTypeId, addInfo, clientTypeId, isChanging);
+            CheckForErrors(firstName, lastName, idNumber, addInfo, clientTypeId);
+            if (ClientType == 2) { lastName ??= "0"; }
 
             if (Errors.Count == 0)
             {
                 // Create client as object
                 CreateGuest(eventId, guestId, firstName!, lastName!, clientTypeId, idNumber!, paymentTypeId, addInfo!, isChanging);
 
-                Response.Redirect("../Index");
+                // Adding try-catch for tests since tests don't like redirecting
+                // and I couldn't find a way for tests to ignore redirecting.
+                try
+                {
+                    Response.Redirect("../Index");
+                }
+                catch (NullReferenceException)
+                {
+                }
             }
+            return Client.GuestId;
         }
 
         /// <summary>
@@ -94,9 +105,11 @@ namespace praktikaylrik.Pages
             cnn = new SqlConnection(DatabaseConnection.ConnectionString);
             cnn.Open();
 
+            command = cnn.CreateCommand();
+
             
-            string sql = "SELECT * FROM event WHERE event_id = " + eventId;
-            command = new SqlCommand(sql, cnn);
+            command.CommandText = "SELECT * FROM event WHERE event_id=@eventId;";
+            command.Parameters.AddWithValue("@eventId", eventId);
             //command.Parameters.AddWithValue("@eventId", eventId);
 
             dataReader = command.ExecuteReader();
@@ -220,12 +233,13 @@ namespace praktikaylrik.Pages
             // Either update or insert a new object (Guest) into database
             if (isChanging == 1)
             {
+                Client.GuestId = guestId;
                 command.CommandText = "UPDATE guest SET first_name=@fname, last_name=@lname, id_number=@idNumber, payment_type=@paymentTypeId, add_info=@addInfo WHERE guest_id=@guestId;";
                 command.Parameters.AddWithValue("@guestId", guestId);
             }
             else
             {
-                command.CommandText = "INSERT INTO guest (first_name, last_name, client_type, id_number, payment_type, add_info, event_id) VALUES(@fname, @lname, @clientType, @idNumber, @paymentTypeId, @addInfo, @eventId);";
+                command.CommandText = "INSERT INTO guest (first_name, last_name, client_type, id_number, payment_type, add_info, event_id) VALUES(@fname, @lname, @clientType, @idNumber, @paymentTypeId, @addInfo, @eventId); SELECT SCOPE_IDENTITY();";
                 command.Parameters.AddWithValue("@eventId", eventId);
                 command.Parameters.AddWithValue("@clientType", clientTypeId);
             }
@@ -236,8 +250,28 @@ namespace praktikaylrik.Pages
             command.Parameters.AddWithValue("@addInfo", Client.AddInfo);
 
 
-            command.ExecuteScalar();
-            cnn.Close();
+            if (isChanging != 1)
+            {
+                try
+                {
+                    Client.GuestId = int.Parse(command.ExecuteScalar().ToString()!);
+
+                    command.Dispose();
+                    cnn.Close();
+                }
+                catch
+                {
+                    command.Dispose();
+                    cnn.Close();
+
+                    throw new ArgumentException("Andmebaasi sisestamine ebaõnnestus!");
+                }
+            } else
+            {
+                command.ExecuteScalar();
+                command.Dispose();
+                cnn.Close();
+            }
         }
    
         /// <summary>
@@ -286,7 +320,7 @@ namespace praktikaylrik.Pages
         /// <param name="addInfo">Additional information about the guest in this event.</param>
         /// <param name="clientTypeId">Type of guest (whether private person or company).</param>
         /// <param name="isChanging">Number 0 means creating new participant for the event, 1 means editing someone's info.</param>
-        private void CheckForErrors(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId, int isChanging)
+        private void CheckForErrors(string firstName, string lastName, string idNumber, string addInfo, int clientTypeId)
         {
             if (clientTypeId == 1)
             {
@@ -294,30 +328,30 @@ namespace praktikaylrik.Pages
                 if (firstName != null && firstName.Length < 2)
                 {
                     Errors.Add("Kontrolli eesnime, pikkus peaks olema vähemalt 2 märki.");
-                    //throw new ArgumentException("Eesnimi nimi on liiga lühike!");
+                    throw new ArgumentException("Eesnimi nimi on liiga lühike!");
                 }
                 if (lastName != null && lastName.Length < 2)
                 {
                     Errors.Add("Kontrolli perenime, pikkus peaks olema vähemalt 2 märki.");
-                    //throw new ArgumentException("Perekonnanimi nimi on liiga lühike!");
+                    throw new ArgumentException("Perekonnanimi nimi on liiga lühike!");
                 }
                 if (idNumber != null && !idNumber.Length.Equals(11))
                 {
                     Errors.Add("Kontrolli isikukoodi, pikkus peaks olema 11 numbrit.");
-                    //throw new ArgumentException("Isikukood ei ole korrektne!");
+                    throw new ArgumentException("Isikukood ei ole korrektne!");
                 } else if (idNumber != null && idNumber.Length.Equals(11))
                 {
-                    if (!validateIDCode(idNumber))
+                    if (!ValidateIDCode(idNumber))
                     {
                         Errors.Add("Isikukood on vigane, kontrolli isikukoodi!");
-                        //throw new ArgumentException("Isikukood ei ole korrektne!");
+                        throw new ArgumentException("Isikukood ei ole korrektne!");
 
                     }
                 }
                 if (addInfo != null && addInfo.Length > 1500)
                 {
                     Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 1500 märki! Praegu on sisestatud " + addInfo.Length + " märki.");
-                    //throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 1500 märki!");
+                    throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 1500 märki!");
                 }
             }
             else
@@ -326,20 +360,18 @@ namespace praktikaylrik.Pages
                 if (firstName != null && firstName.Length < 2)
                 {
                     Errors.Add("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
-                    //throw new ArgumentException("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
+                    throw new ArgumentException("Kontrolli firma nime pikkust, pikkus peaks olema vähemalt 2 märki.");
                 }
-
-                lastName ??= "0";
 
                 if (idNumber != null && !idNumber.Length.Equals(8))
                 {
                     Errors.Add("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
-                    //throw new ArgumentException("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
+                    throw new ArgumentException("Kontrolli registrikoodi, pikkus peaks olema 8 numbrit.");
                 }
                 if (addInfo != null && addInfo.Length > 5000)
                 {
                     Errors.Add("Lisainfo lahtris tohib olla maksimaalselt 5000 märki! Praegu on sisestatud " + addInfo.Length + " märki.");
-                    //throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 5000 märki!");
+                    throw new ArgumentException("Lisainfo lahtris tohib olla maksimaalselt 5000 märki!");
                 }
             }
         }
@@ -349,7 +381,7 @@ namespace praktikaylrik.Pages
         /// </summary>
         /// <param name="idCode">id code to validate</param>
         /// <returns>Whether the id code is correct or not.</returns>
-        private bool validateIDCode(string idCode)
+        private static bool ValidateIDCode(string idCode)
         {
             try
             {
@@ -425,7 +457,7 @@ namespace praktikaylrik.Pages
                       + Int16.Parse(idCode[9].ToString()) * 3;
 
                     c = n % 11;
-                    c = c % 10;
+                    c %= 10;
                 }
 
                 return (c == Int16.Parse(idCode[10].ToString()));

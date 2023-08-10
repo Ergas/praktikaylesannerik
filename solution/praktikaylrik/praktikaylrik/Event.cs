@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text.Json;
 
 namespace praktikaylrik
 {
@@ -11,5 +12,10 @@ namespace praktikaylrik
         public DateTime EventDate { get; set; }
         public string Location { get; set; } = "";
         public string AddInfo { get; set; } = "";
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }
