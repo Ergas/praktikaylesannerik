@@ -24,7 +24,9 @@ namespace praktikaylrikTests
                 AddInfo = addInfo
             };
 
-            int eventId = addEvent.OnPost(insertEvent.Name, insertEvent.EventDate, insertEvent.Location, insertEvent.AddInfo);
+            addEvent.OnPost(insertEvent.Name, insertEvent.EventDate, insertEvent.Location, insertEvent.AddInfo);
+
+            int eventId = addEvent.EventId;
 
             Event eventObj;
             SqlConnection cnn;
@@ -80,7 +82,9 @@ namespace praktikaylrikTests
 
             AddParticipant addParticipant = new AddParticipant();
 
-            int guestId = addParticipant.OnPost(insertedGuest.EventId, -1, insertedGuest.FirstName, insertedGuest.LastName, insertedGuest.IdNumber, insertedGuest.PaymentTypeId, insertedGuest.AddInfo, insertedGuest.ClientTypeId, 0);
+            addParticipant.OnPost(insertedGuest.EventId, -1, insertedGuest.FirstName, insertedGuest.LastName, insertedGuest.IdNumber, insertedGuest.PaymentTypeId, insertedGuest.AddInfo, insertedGuest.ClientTypeId, 0);
+
+            int guestId = addParticipant.Client.GuestId;
 
             Guest guestObj;
             SqlConnection cnn;

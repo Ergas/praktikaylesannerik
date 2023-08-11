@@ -58,7 +58,7 @@ namespace praktikaylrik.Pages
         /// <param name="addInfo">Additional information about the guest in this event.</param>
         /// <param name="clientTypeId">Type of guest (whether private person or company).</param>
         /// <param name="isChanging">Number 0 means creating new participant for the event, 1 means editing someone's info.</param>
-        public int OnPost(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId, int isChanging)
+        public void OnPost(int eventId, int guestId, string firstName, string lastName, string idNumber, int paymentTypeId, string addInfo, int clientTypeId, int isChanging)
         {
             GetEvent(eventId);
             GetPaymentTypes();
@@ -89,7 +89,6 @@ namespace praktikaylrik.Pages
                 {
                 }
             }
-            return Client.GuestId;
         }
 
         /// <summary>

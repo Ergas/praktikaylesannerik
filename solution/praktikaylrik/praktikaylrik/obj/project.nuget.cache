@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qetLverVdhsraTm9lOylyHBKFR1dpMjQzqNQicUwtdkdPEbOsz3DjIYHYfyFP9z18fRvKiaeJqPjojrPvv6rVA==",
+  "dgSpecHash": "W16cbnFVuAe/7v1cJNYSha7HwdXclcqOUYd/29+DBpNWtwYbGaHIbmIfXk++oOboy/61ECzyP2GW2bAkIC2T9A==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ergas\\Documents\\GitHub\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj",
+  "projectFilePath": "C:\\Users\\ergas\\Documents\\Github\\praktikaylesannerik\\solution\\praktikaylrik\\praktikaylrik\\praktikaylrik.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ergas\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\ergas\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",

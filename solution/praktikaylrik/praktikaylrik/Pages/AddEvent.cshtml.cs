@@ -12,6 +12,8 @@ namespace praktikaylrik.Pages
         public string? Location { get; set; }
         public string? AddInfo { get; set; }
 
+        public int EventId = -1;
+
         public void OnGet()
         {
 
@@ -24,7 +26,7 @@ namespace praktikaylrik.Pages
         /// <param name="date">Date of when the event should happen.</param>
         /// <param name="location">Location where the event would be held.</param>
         /// <param name="addInfo">Additional information about the event.</param>
-        public int OnPost(string name, DateTime date, string location, string addInfo)
+        public void OnPost(string name, DateTime date, string location, string addInfo)
         {
             addInfo ??= "";
             CheckForErrors(name, date, location, addInfo);
@@ -81,7 +83,8 @@ namespace praktikaylrik.Pages
             Location = location;
             AddInfo = addInfo;
 
-            return eventId;
+
+            EventId = eventId;
         }
 
         /// <summary>
